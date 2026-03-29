@@ -1,0 +1,35 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120658"
+  },
+  "applications": "*",
+  "documentation": "Raport legat de durata și desfășurarea consultației.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "oraProgramata",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "oraInceputConsultatie",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "durataConsultatie",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "RaportProgramare",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "programare",
+      "relationshipName": "programare",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

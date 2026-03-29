@@ -1,0 +1,43 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120655"
+  },
+  "applications": "*",
+  "documentation": "Programul unui medic într-o locație.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "ziuaSaptamanii",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "oraStart",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "oraFinal",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "name": "Program",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "medic",
+      "otherEntityRelationshipName": "program",
+      "relationshipName": "medic",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "locatie",
+      "otherEntityRelationshipName": "program",
+      "relationshipName": "locatie",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

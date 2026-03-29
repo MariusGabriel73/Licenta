@@ -1,0 +1,28 @@
+{
+  "medicalsystemApp": {
+    "fisaMedicala": {
+      "home": {
+        "title": "Fisa Medicalas",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Fisa Medicala",
+        "createOrEditLabel": "Create or edit a Fisa Medicala",
+        "notFound": "No Fisa Medicalas found"
+      },
+      "created": "A new Fisa Medicala is created with identifier {{ param }}",
+      "updated": "A Fisa Medicala is updated with identifier {{ param }}",
+      "deleted": "A Fisa Medicala is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Fisa Medicala {{ id }}?"
+      },
+      "detail": {
+        "title": "Fisa Medicala"
+      },
+      "id": "ID",
+      "diagnostic": "Diagnostic",
+      "tratament": "Tratament",
+      "recomandari": "Recomandari",
+      "dataConsultatie": "Data Consultatie",
+      "programare": "Programare"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "medicalsystemApp": {
+    "clinica": {
+      "home": {
+        "title": "Clinicas",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Clinica",
+        "createOrEditLabel": "Create or edit a Clinica",
+        "notFound": "No Clinicas found"
+      },
+      "created": "A new Clinica is created with identifier {{ param }}",
+      "updated": "A Clinica is updated with identifier {{ param }}",
+      "deleted": "A Clinica is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Clinica {{ id }}?"
+      },
+      "detail": {
+        "title": "Clinica"
+      },
+      "id": "ID",
+      "nume": "Nume",
+      "telefon": "Telefon",
+      "email": "Email",
+      "locatie": "Locatie",
+      "programare": "Programare",
+      "medici": "Medici"
+    }
+  }
+}

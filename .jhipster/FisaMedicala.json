@@ -1,0 +1,39 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120657"
+  },
+  "applications": "*",
+  "documentation": "Fișa medicală completată după consultație.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "diagnostic",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "tratament",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "recomandari",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dataConsultatie",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "name": "FisaMedicala",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "programare",
+      "relationshipName": "programare",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

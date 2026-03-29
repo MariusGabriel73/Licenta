@@ -1,0 +1,29 @@
+{
+  "medicalsystemApp": {
+    "pacient": {
+      "home": {
+        "title": "Pacients",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Pacient",
+        "createOrEditLabel": "Create or edit a Pacient",
+        "notFound": "No Pacients found"
+      },
+      "created": "A new Pacient is created with identifier {{ param }}",
+      "updated": "A Pacient is updated with identifier {{ param }}",
+      "deleted": "A Pacient is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Pacient {{ id }}?"
+      },
+      "detail": {
+        "title": "Pacient"
+      },
+      "id": "ID",
+      "cnp": "Cnp",
+      "telefon": "Telefon",
+      "dataNasterii": "Data Nasterii",
+      "adresa": "Adresa",
+      "user": "User",
+      "programare": "Programare"
+    }
+  }
+}

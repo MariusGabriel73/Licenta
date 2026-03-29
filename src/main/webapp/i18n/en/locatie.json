@@ -1,0 +1,28 @@
+{
+  "medicalsystemApp": {
+    "locatie": {
+      "home": {
+        "title": "Locaties",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Locatie",
+        "createOrEditLabel": "Create or edit a Locatie",
+        "notFound": "No Locaties found"
+      },
+      "created": "A new Locatie is created with identifier {{ param }}",
+      "updated": "A Locatie is updated with identifier {{ param }}",
+      "deleted": "A Locatie is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Locatie {{ id }}?"
+      },
+      "detail": {
+        "title": "Locatie"
+      },
+      "id": "ID",
+      "oras": "Oras",
+      "adresa": "Adresa",
+      "codPostal": "Cod Postal",
+      "program": "Program",
+      "clinici": "Clinici"
+    }
+  }
+}

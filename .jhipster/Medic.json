@@ -1,0 +1,64 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120651"
+  },
+  "applications": "*",
+  "documentation": "Informații specifice medicului.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "gradProfesional",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "telefon",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "disponibil",
+      "fieldType": "Boolean"
+    }
+  ],
+  "name": "Medic",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one",
+      "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "sectie",
+      "otherEntityRelationshipName": "medici",
+      "relationshipName": "sectie",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "clinica",
+      "otherEntityRelationshipName": "medici",
+      "relationshipName": "clinici",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "program",
+      "otherEntityRelationshipName": "medic",
+      "relationshipName": "program",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "programare",
+      "otherEntityRelationshipName": "medic",
+      "relationshipName": "programare",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

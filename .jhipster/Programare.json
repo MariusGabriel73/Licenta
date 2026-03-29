@@ -1,0 +1,52 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120656"
+  },
+  "applications": "*",
+  "documentation": "Programarea unui pacient.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "dataProgramare",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "ProgramareStatus",
+      "fieldTypeDocumentation": "Enum pentru starea programării.",
+      "fieldValues": "ACTIVA,ANULATA,FINALIZATA"
+    },
+    {
+      "fieldName": "observatii",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Programare",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "pacient",
+      "otherEntityRelationshipName": "programare",
+      "relationshipName": "pacient",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "medic",
+      "otherEntityRelationshipName": "programare",
+      "relationshipName": "medic",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "clinica",
+      "otherEntityRelationshipName": "programare",
+      "relationshipName": "clinica",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

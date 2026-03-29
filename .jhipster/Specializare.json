@@ -1,0 +1,29 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120652"
+  },
+  "applications": "*",
+  "documentation": "Domeniu medical al unui medic.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "nume",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Specializare",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "medic",
+      "otherEntityRelationshipName": "specializari",
+      "relationshipName": "medici",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

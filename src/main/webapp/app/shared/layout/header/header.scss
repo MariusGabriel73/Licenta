@@ -1,0 +1,103 @@
+$header-color: #0f172a;
+$header-color-secondary: #64748b;
+$header-color-hover: #0ea5e9;
+
+/* ==========================================================================
+Development Ribbon (Hidden)
+========================================================================== */
+.ribbon {
+  display: none;
+}
+
+/* ==========================================================================
+Navbar styles
+========================================================================== */
+.jh-navbar {
+  padding: 0.2em 1em;
+  .profile-image {
+    margin: -10px 0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+  }
+  .dropdown-item.active,
+  .dropdown-item.active:focus,
+  .dropdown-item.active:hover {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: #0ea5e9;
+  }
+  .dropdown-toggle::after {
+    margin-left: 0.15em;
+  }
+  ul.navbar-nav {
+    padding: 0.5em;
+    .nav-item {
+      margin-left: 1.5rem;
+    }
+  }
+  a.nav-link {
+    font-weight: 500;
+    color: #475569 !important;
+    &:hover {
+      color: #0ea5e9 !important;
+    }
+    > span {
+      margin-left: 5px;
+    }
+  }
+  .jh-navbar-toggler {
+    color: #64748b;
+    font-size: 1.5em;
+    padding: 10px;
+    &:hover {
+      color: #0ea5e9;
+    }
+  }
+}
+.navbar-brand {
+  overflow: hidden;
+}
+
+.jh-navbar .navbar-nav .nav-link {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.navbar-version {
+  font-size: 0.65em;
+  color: $header-color-secondary;
+  padding: 0 0 0 10px;
+}
+
+.brand-logo {
+  &:hover {
+    text-decoration: none;
+  }
+  .brand-icon {
+    height: 35px;
+    width: auto;
+    display: inline-block;
+    img {
+      width: 45px;
+    }
+  }
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-left: 0.25rem;
+  color: $header-color;
+  &:hover {
+    color: $header-color-hover;
+    text-decoration: none;
+  }
+}
+
+.loading-bar {
+  height: 3px;
+  background-color: #009cd8;
+  position: absolute;
+  top: 0;
+  z-index: 1031;
+}

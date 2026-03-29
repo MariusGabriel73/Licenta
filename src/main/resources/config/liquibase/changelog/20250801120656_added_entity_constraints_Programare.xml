@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity Programare.
+    -->
+    <changeSet id="20250801120656-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="pacient_id"
+                                 baseTableName="programare"
+                                 constraintName="fk_programare__pacient_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="pacient"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="medic_id"
+                                 baseTableName="programare"
+                                 constraintName="fk_programare__medic_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="medic"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="clinica_id"
+                                 baseTableName="programare"
+                                 constraintName="fk_programare__clinica_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="clinica"
+                                 />
+    </changeSet>
+</databaseChangeLog>

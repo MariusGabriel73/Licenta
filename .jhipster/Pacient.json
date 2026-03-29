@@ -1,0 +1,48 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120650"
+  },
+  "applications": "*",
+  "documentation": "Informații specifice pacientului.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "cnp",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "telefon",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dataNasterii",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "adresa",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Pacient",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one",
+      "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "programare",
+      "otherEntityRelationshipName": "pacient",
+      "relationshipName": "programare",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

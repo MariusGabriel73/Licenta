@@ -1,0 +1,31 @@
+{
+  "medicalsystemApp": {
+    "programare": {
+      "home": {
+        "title": "Programares",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Programare",
+        "createOrEditLabel": "Create or edit a Programare",
+        "notFound": "No Programares found"
+      },
+      "created": "A new Programare is created with identifier {{ param }}",
+      "updated": "A Programare is updated with identifier {{ param }}",
+      "deleted": "A Programare is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Programare {{ id }}?"
+      },
+      "detail": {
+        "title": "Programare"
+      },
+      "id": "ID",
+      "dataProgramare": "Data Programare",
+      "status": "Status",
+      "observatii": "Observatii",
+      "pacient": "Pacient",
+      "medic": "Medic",
+      "clinica": "Clinica",
+      "fisaMedicala": "Fisa Medicala",
+      "raportProgramare": "Raport Programare"
+    }
+  }
+}

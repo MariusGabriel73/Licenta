@@ -1,0 +1,43 @@
+{
+  "angularJSSuffix": "MedApp",
+  "annotations": {
+    "changelogDate": "20250801120654"
+  },
+  "applications": "*",
+  "documentation": "Informații despre o locație fizică.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "oras",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "adresa",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "codPostal",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Locatie",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "program",
+      "otherEntityRelationshipName": "locatie",
+      "relationshipName": "program",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "clinica",
+      "otherEntityRelationshipName": "locatie",
+      "relationshipName": "clinici",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

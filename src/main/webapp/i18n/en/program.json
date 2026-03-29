@@ -1,0 +1,28 @@
+{
+  "medicalsystemApp": {
+    "program": {
+      "home": {
+        "title": "Programs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Program",
+        "createOrEditLabel": "Create or edit a Program",
+        "notFound": "No Programs found"
+      },
+      "created": "A new Program is created with identifier {{ param }}",
+      "updated": "A Program is updated with identifier {{ param }}",
+      "deleted": "A Program is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Program {{ id }}?"
+      },
+      "detail": {
+        "title": "Program"
+      },
+      "id": "ID",
+      "ziuaSaptamanii": "Ziua Saptamanii",
+      "oraStart": "Ora Start",
+      "oraFinal": "Ora Final",
+      "medic": "Medic",
+      "locatie": "Locatie"
+    }
+  }
+}

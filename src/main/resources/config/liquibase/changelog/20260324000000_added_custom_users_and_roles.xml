@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260324000000-1-medic" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_authority WHERE name='ROLE_MEDIC'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_authority">
+            <column name="name" value="ROLE_MEDIC"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-1-pacient" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_authority WHERE name='ROLE_PACIENT'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_authority">
+            <column name="name" value="ROLE_PACIENT"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-2-medic" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user WHERE login='medic'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="3"/>
+            <column name="login" value="medic"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Gabriel"/>
+            <column name="last_name" value="Matei"/>
+            <column name="email" value="medic@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-2-pacient" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user WHERE login='pacient'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="4"/>
+            <column name="login" value="pacient"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Mihnea"/>
+            <column name="last_name" value="Radu"/>
+            <column name="email" value="pacient@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-3-medic-user" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM jhi_user WHERE id=3
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user_authority WHERE user_id=3 AND authority_name='ROLE_USER'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="3"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-3-medic-role" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM jhi_user WHERE id=3
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user_authority WHERE user_id=3 AND authority_name='ROLE_MEDIC'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="3"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-3-pacient-user" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM jhi_user WHERE id=4
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user_authority WHERE user_id=4 AND authority_name='ROLE_USER'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="4"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260324000000-3-pacient-role" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM jhi_user WHERE id=4
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user_authority WHERE user_id=4 AND authority_name='ROLE_PACIENT'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="4"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

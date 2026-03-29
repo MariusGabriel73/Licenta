@@ -1,0 +1,105 @@
+# ===================================================================
+# Spring Boot configuration.
+# This configuration can be overridden by profile-specific files
+# like application-dev.yml, application-prod.yml, etc.
+# ===================================================================
+
+---
+spring:
+  application:
+    name: medicalsystem
+  docker:
+    compose:
+      enabled: false
+  profiles:
+    active: dev
+    group:
+      dev:
+        - dev
+        - api-docs
+  jmx:
+    enabled: false
+  messages:
+    basename: i18n/messages
+  main:
+    allow-bean-definition-overriding: true
+  webflux:
+    problemdetails:
+      enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          authority-prefix: ''
+          authorities-claim-name: auth
+  task:
+    execution:
+      thread-name-prefix: medicalsystem-task-
+      pool:
+        core-size: 2
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: medicalsystem-scheduling-
+      pool:
+        size: 2
+  thymeleaf:
+    mode: HTML
+  output:
+    ansi:
+      console-available: true
+  # >>> SETĂRILE DE MAIL CORECTATE
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: medicalsystem73@gmail.com
+    password: zfwzseqdngxvabec
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  # <<< SFÂRȘIT SETĂRI MAIL
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+
+# >>> ADĂUGAT: Actuator pe /management și expunere health/info
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: configprops,env,health,info,jhimetrics,loggers,prometheus,threaddump,liquibase
+  endpoint:
+    health:
+      show-details: when_authorized
+# <<< SFÂRȘIT ADĂUGAT
+
+springdoc:
+  show-actuator: true
+
+info:
+  display-ribbon-on-profiles: 'dev'
+
+jhipster:
+  clientApp:
+    name: 'medicalsystemApp'
+  # >>> JHIPSTER MAIL CORECTAT
+  mail:
+    from: medicalsystem73@gmail.com
+  # <<< SFÂRȘIT JHIPSTER MAIL
+  api-docs:
+    default-include-pattern: /api/**
+    management-include-pattern: /management/**
+    title: Medicalsystem API
+    description: Medicalsystem API documentation
+    version: 0.0.1
+  security:
+    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
+
+# jhipster-needle-add-application-yaml-document

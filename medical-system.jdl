@@ -1,0 +1,119 @@
+/**
+ * Enum pentru starea programării.
+ */
+enum ProgramareStatus {
+  ACTIVA, ANULATA, FINALIZATA
+}
+
+/**
+ * Informații specifice pacientului.
+ */
+entity Pacient {
+  cnp String required
+  telefon String
+  dataNasterii LocalDate
+  adresa String
+}
+
+/**
+ * Informații specifice medicului.
+ */
+entity Medic {
+  gradProfesional String
+  telefon String
+  disponibil Boolean
+}
+
+/**
+ * Domeniu medical al unui medic / Secția din clinică.
+ */
+entity Sectie {
+  nume String required
+}
+
+
+/**
+ * Informații despre o clinică.
+ */
+entity Clinica {
+  nume String required
+  telefon String
+  email String
+}
+
+/**
+ * Informații despre o locație fizică.
+ */
+entity Locatie {
+  oras String
+  adresa String
+  codPostal String
+}
+
+/**
+ * Programul unui medic într-o locație.
+ */
+entity Program {
+  ziuaSaptamanii String
+  oraStart ZonedDateTime
+  oraFinal ZonedDateTime
+}
+
+/**
+ * Programarea unui pacient.
+ */
+entity Programare {
+  dataProgramare ZonedDateTime
+  status ProgramareStatus
+  observatii String
+}
+
+/**
+ * Fișa medicală completată după consultație.
+ */
+entity FisaMedicala {
+  diagnostic String
+  tratament String
+  recomandari String
+  dataConsultatie ZonedDateTime
+}
+
+/**
+ * Raport legat de durata și desfășurarea consultației.
+ */
+entity RaportProgramare {
+  oraProgramata ZonedDateTime
+  oraInceputConsultatie ZonedDateTime
+  durataConsultatie Integer
+}
+
+// ================== RELAȚII ==================
+
+relationship OneToOne {
+  Pacient{user} to User with builtInEntity
+  Medic{user} to User with builtInEntity
+  FisaMedicala{programare} to Programare
+  RaportProgramare{programare} to Programare
+}
+
+relationship ManyToOne {
+  Program to Medic
+  Program to Locatie
+  Programare to Pacient
+  Programare to Medic
+  Programare to Clinica
+  
+  Clinica{locatie} to Locatie{clinici}
+  Medic{sectie} to Sectie{medici}
+}
+
+relationship ManyToMany {
+  Medic{clinici} to Clinica{medici}
+}
+
+// ================== CONFIGURĂRI ==================
+
+paginate all with pagination
+dto * with mapstruct
+service all with serviceImpl
+angularSuffix * with MedApp

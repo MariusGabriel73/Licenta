@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260329200000-1-v5-insert" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user WHERE login='medic'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="3001"/>
+            <column name="login" value="medic"/>
+            <column name="password_hash" value="$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC"/> <!-- password is 'admin' -->
+            <column name="first_name" value="Test"/>
+            <column name="last_name" value="Medic"/>
+            <column name="email" value="medic@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="3001"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="3001"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260329200000-1-v5-link" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM jhi_user WHERE login='medic'
+            </sqlCheck>
+        </preConditions>
+        <update tableName="medic">
+            <column name="user_id" valueComputed="(SELECT id FROM jhi_user WHERE login='medic')"/>
+            <where>id = 15</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="20260329200000-2-v5-insert" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user WHERE login='pacient'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="3002"/>
+            <column name="login" value="pacient"/>
+            <column name="password_hash" value="$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC"/> <!-- password is 'admin' -->
+            <column name="first_name" value="Test"/>
+            <column name="last_name" value="Pacient"/>
+            <column name="email" value="pacient@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="3002"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="3002"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260329200000-2-v5-link" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM jhi_user WHERE login='pacient'
+            </sqlCheck>
+        </preConditions>
+        <update tableName="pacient">
+            <column name="user_id" valueComputed="(SELECT id FROM jhi_user WHERE login='pacient')"/>
+            <where>id = 11</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

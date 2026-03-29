@@ -1,0 +1,32 @@
+{
+  "medicalsystemApp": {
+    "medic": {
+      "home": {
+        "title": "Medics",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Medic",
+        "createOrEditLabel": "Create or edit a Medic",
+        "notFound": "No Medics found"
+      },
+      "created": "A new Medic is created with identifier {{ param }}",
+      "updated": "A Medic is updated with identifier {{ param }}",
+      "deleted": "A Medic is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Medic {{ id }}?"
+      },
+      "detail": {
+        "title": "Medic"
+      },
+      "id": "ID",
+      "gradProfesional": "Grad Profesional",
+      "telefon": "Telefon",
+      "disponibil": "Disponibil",
+      "user": "User",
+      "sectie": "Sectie",
+      "clinici": "Clinici",
+      "program": "Program",
+      "programare": "Programare",
+      "specializari": "Specializari"
+    }
+  }
+}

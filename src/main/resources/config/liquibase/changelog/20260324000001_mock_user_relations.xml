@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260324000001-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM jhi_user WHERE login='medic1'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="5"/>
+            <column name="login" value="medic1"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Ion"/>
+            <column name="last_name" value="Popescu"/>
+            <column name="email" value="medic1@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="5"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="5"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="5"/>
+            <where>id = 1</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="6"/>
+            <column name="login" value="medic2"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Maria"/>
+            <column name="last_name" value="Ionescu"/>
+            <column name="email" value="medic2@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="6"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="6"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="6"/>
+            <where>id = 2</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="7"/>
+            <column name="login" value="medic3"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Andrei"/>
+            <column name="last_name" value="Dumitrescu"/>
+            <column name="email" value="medic3@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="7"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="7"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="7"/>
+            <where>id = 3</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="8"/>
+            <column name="login" value="medic4"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Elena"/>
+            <column name="last_name" value="Stan"/>
+            <column name="email" value="medic4@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="8"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="8"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="8"/>
+            <where>id = 4</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="9"/>
+            <column name="login" value="medic5"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Mihai"/>
+            <column name="last_name" value="Gheorghe"/>
+            <column name="email" value="medic5@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="9"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="9"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="9"/>
+            <where>id = 5</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="10"/>
+            <column name="login" value="medic6"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Ana"/>
+            <column name="last_name" value="Radu"/>
+            <column name="email" value="medic6@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="10"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="10"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="10"/>
+            <where>id = 6</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="11"/>
+            <column name="login" value="medic7"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Cristian"/>
+            <column name="last_name" value="Marin"/>
+            <column name="email" value="medic7@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="11"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="11"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="11"/>
+            <where>id = 7</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="12"/>
+            <column name="login" value="medic8"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Ioana"/>
+            <column name="last_name" value="Matei"/>
+            <column name="email" value="medic8@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="12"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="12"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="12"/>
+            <where>id = 8</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="13"/>
+            <column name="login" value="medic9"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Alexandru"/>
+            <column name="last_name" value="Ilie"/>
+            <column name="email" value="medic9@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="13"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="13"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="13"/>
+            <where>id = 9</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="14"/>
+            <column name="login" value="medic10"/>
+            <column name="password_hash" value="$2a$10$JTlJ7olpGcUlnjebok5Il.xNKZuenoRJHQOZhWkryJxBB.mj5F8S2"/>
+            <column name="first_name" value="Diana"/>
+            <column name="last_name" value="Stefan"/>
+            <column name="email" value="medic10@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="14"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="14"/>
+            <column name="authority_name" value="ROLE_MEDIC"/>
+        </insert>
+        <update tableName="medic">
+            <column name="user_id" valueNumeric="14"/>
+            <where>id = 10</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="15"/>
+            <column name="login" value="pacient1"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Vasile"/>
+            <column name="last_name" value="Nicolae"/>
+            <column name="email" value="pacient1@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="15"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="15"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="15"/>
+            <where>id = 1</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="16"/>
+            <column name="login" value="pacient2"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Carmen"/>
+            <column name="last_name" value="Rusu"/>
+            <column name="email" value="pacient2@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="16"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="16"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="16"/>
+            <where>id = 2</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="17"/>
+            <column name="login" value="pacient3"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Florin"/>
+            <column name="last_name" value="Lazar"/>
+            <column name="email" value="pacient3@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="17"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="17"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="17"/>
+            <where>id = 3</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="18"/>
+            <column name="login" value="pacient4"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Mihaela"/>
+            <column name="last_name" value="Oprea"/>
+            <column name="email" value="pacient4@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="18"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="18"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="18"/>
+            <where>id = 4</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="19"/>
+            <column name="login" value="pacient5"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Stefan"/>
+            <column name="last_name" value="Neagu"/>
+            <column name="email" value="pacient5@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="19"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="19"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="19"/>
+            <where>id = 5</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="20"/>
+            <column name="login" value="pacient6"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Gabriela"/>
+            <column name="last_name" value="Badea"/>
+            <column name="email" value="pacient6@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="20"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="20"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="20"/>
+            <where>id = 6</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="21"/>
+            <column name="login" value="pacient7"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Bogdan"/>
+            <column name="last_name" value="Dinu"/>
+            <column name="email" value="pacient7@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="21"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="21"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="21"/>
+            <where>id = 7</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="22"/>
+            <column name="login" value="pacient8"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Adriana"/>
+            <column name="last_name" value="Ciobanu"/>
+            <column name="email" value="pacient8@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="22"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="22"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="22"/>
+            <where>id = 8</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="23"/>
+            <column name="login" value="pacient9"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Gabriel"/>
+            <column name="last_name" value="Tudor"/>
+            <column name="email" value="pacient9@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="23"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="23"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="23"/>
+            <where>id = 9</where>
+        </update>
+        <insert tableName="jhi_user">
+            <column name="id" valueNumeric="24"/>
+            <column name="login" value="pacient10"/>
+            <column name="password_hash" value="$2a$10$wZRrM0hADkcwOyjjsjZVf.mPZGGcXFSth1Tcd7MKllksoEVPJPsoC"/>
+            <column name="first_name" value="Roxana"/>
+            <column name="last_name" value="Dragomir"/>
+            <column name="email" value="pacient10@localhost"/>
+            <column name="activated" valueBoolean="true"/>
+            <column name="lang_key" value="en"/>
+            <column name="created_by" value="system"/>
+            <column name="last_modified_by" value="system"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="24"/>
+            <column name="authority_name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" valueNumeric="24"/>
+            <column name="authority_name" value="ROLE_PACIENT"/>
+        </insert>
+        <update tableName="pacient">
+            <column name="user_id" valueNumeric="24"/>
+            <where>id = 10</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

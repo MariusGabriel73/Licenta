@@ -1,0 +1,27 @@
+{
+  "medicalsystemApp": {
+    "raportProgramare": {
+      "home": {
+        "title": "Raport Programares",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Raport Programare",
+        "createOrEditLabel": "Create or edit a Raport Programare",
+        "notFound": "No Raport Programares found"
+      },
+      "created": "A new Raport Programare is created with identifier {{ param }}",
+      "updated": "A Raport Programare is updated with identifier {{ param }}",
+      "deleted": "A Raport Programare is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Raport Programare {{ id }}?"
+      },
+      "detail": {
+        "title": "Raport Programare"
+      },
+      "id": "ID",
+      "oraProgramata": "Ora Programata",
+      "oraInceputConsultatie": "Ora Inceput Consultatie",
+      "durataConsultatie": "Durata Consultatie",
+      "programare": "Programare"
+    }
+  }
+}

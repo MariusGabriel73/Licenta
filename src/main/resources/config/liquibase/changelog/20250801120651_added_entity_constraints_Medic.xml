@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity Medic.
+    -->
+    <changeSet id="20250801120651-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="medic"
+                                 constraintName="fk_medic__user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="sectie_id"
+                                 baseTableName="medic"
+                                 constraintName="fk_medic__sectie_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="sectie"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="medic_id"
+                                 baseTableName="rel_medic__clinici"
+                                 constraintName="fk_rel_medic__clinici__medic_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="medic"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="clinici_id"
+                                 baseTableName="rel_medic__clinici"
+                                 constraintName="fk_rel_medic__clinici__clinici_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="clinica"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="medic_id"
+                                 baseTableName="rel_medic__specializari"
+                                 constraintName="fk_rel_medic__specializari__medic_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="medic"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="specializari_id"
+                                 baseTableName="rel_medic__specializari"
+                                 constraintName="fk_rel_medic__specializari__specializari_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="specializare"
+                                 />
+    </changeSet>
+</databaseChangeLog>

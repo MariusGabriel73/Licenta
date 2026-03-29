@@ -1,0 +1,17 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration is used for unit/integration tests with testcontainers database containers.
+#
+# To activate this configuration launch integration tests with the 'testcontainers' profile
+#
+# More information on database containers: https://www.testcontainers.org/modules/databases/
+# ===================================================================
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/medicalsystem
+    username: marius
+    password: 2073
+    driver-class-name: org.postgresql.Driver

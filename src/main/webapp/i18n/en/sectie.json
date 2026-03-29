@@ -1,0 +1,25 @@
+{
+  "medicalsystemApp": {
+    "sectie": {
+      "home": {
+        "title": "Secties",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Sectie",
+        "createOrEditLabel": "Create or edit a Sectie",
+        "notFound": "No Secties found"
+      },
+      "created": "A new Sectie is created with identifier {{ param }}",
+      "updated": "A Sectie is updated with identifier {{ param }}",
+      "deleted": "A Sectie is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Sectie {{ id }}?"
+      },
+      "detail": {
+        "title": "Sectie"
+      },
+      "id": "ID",
+      "nume": "Nume",
+      "medici": "Medici"
+    }
+  }
+}
