@@ -49,3 +49,12 @@ export const MedicAgenda = () => (
     </NavLink>
   </NavItem>
 );
+
+export const PatientAppointments = () => (
+  <NavItem>
+    <NavLink tag={Link} to="/pacient" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="calendar-check" />
+      <span>Programări</span>
+    </NavLink>
+  </NavItem>
+);

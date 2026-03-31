@@ -297,8 +297,14 @@ export default function MedicPage() {
                         {dayAppts.slice(0, 2).map((a, idx) => (
                           <div
                             key={a.id || idx}
-                            className="calendar-event-pill bg-soft-success mb-1 truncate small px-2 rounded-pill"
-                            style={{ fontSize: '0.7rem', padding: '2px 0' }}
+                            className="calendar-event-pill bg-soft-success mb-1 truncate small px-2 rounded-pill shadow-sm"
+                            style={{ fontSize: '0.7rem', padding: '2px 0', cursor: 'pointer' }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (a.clinicaId) setClinicaId(a.clinicaId);
+                              if (a.locatieId) setLocatieId(a.locatieId);
+                              setSelectedDate(dayjs(a.dataProgramare).format('YYYY-MM-DD'));
+                            }}
                           >
                             {dayjs(a.dataProgramare).format('HH:mm')} {a.pacient?.user?.lastName || 'Pacient'}
                           </div>
