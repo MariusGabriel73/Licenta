@@ -175,7 +175,8 @@ public class ProgramareResource {
         @RequestParam(name = "dataProgramare.greaterThanOrEqual", required = false) java.time.Instant dataStart,
         @RequestParam(name = "dataProgramare.lessThan", required = false) java.time.Instant dataEnd,
         @RequestParam(name = "medicId.equals", required = false) Long medicId,
-        @RequestParam(name = "locatieId.equals", required = false) Long locatieId
+        @RequestParam(name = "locatieId.equals", required = false) Long locatieId,
+        @RequestParam(name = "pacientId.equals", required = false) Long pacientId
     ) {
         if ("fisamedicala-is-null".equals(filter)) {
             LOG.debug("REST request to get all Programares where fisaMedicala is null");
@@ -188,7 +189,13 @@ public class ProgramareResource {
         }
 
         if (medicId != null && locatieId != null && dataStart != null && dataEnd != null) {
-            LOG.debug("REST request to get Programares for medic {} and locatie {} between {} and {}", medicId, locatieId, dataStart, dataEnd);
+            LOG.debug(
+                "REST request to get Programares for medic {} and locatie {} between {} and {}",
+                medicId,
+                locatieId,
+                dataStart,
+                dataEnd
+            );
             return programareService
                 .findByMedicIdAndLocatieIdAndDataProgramareBetween(medicId, locatieId, dataStart, dataEnd)
                 .collectList()
@@ -214,6 +221,20 @@ public class ProgramareResource {
                                     )
                                     .body(countWithEntities.getT2())
                             )
+                    );
+            } else if (pacientId != null) {
+                return programareService
+                    .countAllByPacientId(pacientId)
+                    .zipWith(programareService.findAllByPacientId(pacientId, pageable).collectList())
+                    .map(countWithEntities ->
+                        ResponseEntity.ok()
+                            .headers(
+                                PaginationUtil.generatePaginationHttpHeaders(
+                                    ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                                    new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                                )
+                            )
+                            .body(countWithEntities.getT2())
                     );
             } else {
                 return programareService

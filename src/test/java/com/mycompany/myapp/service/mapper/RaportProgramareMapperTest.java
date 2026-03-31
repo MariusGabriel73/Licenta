@@ -12,7 +12,7 @@ class RaportProgramareMapperTest {
 
     @BeforeEach
     void setUp() {
-        raportProgramareMapper = new RaportProgramareMapperImpl();
+        raportProgramareMapper = org.mapstruct.factory.Mappers.getMapper(RaportProgramareMapper.class);
     }
 
     @Test

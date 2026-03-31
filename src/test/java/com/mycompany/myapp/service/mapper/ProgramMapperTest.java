@@ -12,7 +12,7 @@ class ProgramMapperTest {
 
     @BeforeEach
     void setUp() {
-        programMapper = new ProgramMapperImpl();
+        programMapper = org.mapstruct.factory.Mappers.getMapper(ProgramMapper.class);
     }
 
     @Test

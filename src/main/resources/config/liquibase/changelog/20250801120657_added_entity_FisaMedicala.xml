@@ -49,12 +49,13 @@
                   file="config/liquibase/fake-data/fisa_medicala.csv"
                   separator=";"
                   tableName="fisa_medicala"
-                  usePreparedStatements="true">
+                  usePreparedStatements="false">
             <column name="id" type="numeric"/>
             <column name="diagnostic" type="string"/>
             <column name="tratament" type="string"/>
             <column name="recomandari" type="string"/>
-            <column name="data_consultatie" type="date"/>
+            <column name="data_consultatie" type="string"/>
+            <column name="programare_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

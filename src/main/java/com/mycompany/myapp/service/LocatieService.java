@@ -42,6 +42,13 @@ public interface LocatieService {
     Flux<LocatieDTO> findAll(Pageable pageable);
 
     /**
+     * Get the list of locaties for a specific clinic.
+     * @param clinicaId the clinic ID.
+     * @return the list of entities.
+     */
+    Flux<LocatieDTO> findByCliniciId(Long clinicaId);
+
+    /**
      * Returns the number of locaties available.
      * @return the number of entities in the database.
      *

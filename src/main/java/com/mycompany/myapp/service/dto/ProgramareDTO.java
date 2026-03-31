@@ -27,6 +27,18 @@ public class ProgramareDTO implements Serializable {
 
     private ClinicaDTO clinica;
 
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(value = { "programare" }, allowSetters = true)
+    private FisaMedicalaDTO fisaMedicala;
+
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(value = { "programare" }, allowSetters = true)
+    private RaportProgramareDTO raportProgramare;
+
+    private Long pacientId;
+
+    private Long medicId;
+
+    private Long clinicaId;
+
     public Long getId() {
         return id;
     }
@@ -81,6 +93,46 @@ public class ProgramareDTO implements Serializable {
 
     public void setClinica(ClinicaDTO clinica) {
         this.clinica = clinica;
+    }
+
+    public FisaMedicalaDTO getFisaMedicala() {
+        return fisaMedicala;
+    }
+
+    public void setFisaMedicala(FisaMedicalaDTO fisaMedicala) {
+        this.fisaMedicala = fisaMedicala;
+    }
+
+    public RaportProgramareDTO getRaportProgramare() {
+        return raportProgramare;
+    }
+
+    public void setRaportProgramare(RaportProgramareDTO raportProgramare) {
+        this.raportProgramare = raportProgramare;
+    }
+
+    public Long getPacientId() {
+        return pacientId;
+    }
+
+    public void setPacientId(Long pacientId) {
+        this.pacientId = pacientId;
+    }
+
+    public Long getMedicId() {
+        return medicId;
+    }
+
+    public void setMedicId(Long medicId) {
+        this.medicId = medicId;
+    }
+
+    public Long getClinicaId() {
+        return clinicaId;
+    }
+
+    public void setClinicaId(Long clinicaId) {
+        this.clinicaId = clinicaId;
     }
 
     @Override

@@ -22,9 +22,7 @@ public interface PacientRepository extends ReactiveCrudRepository<Pacient, Long>
     @Query("SELECT * FROM pacient entity WHERE entity.user_id IS NULL")
     Flux<Pacient> findAllWhereUserIsNull();
 
-    @Query(
-        "SELECT p.* FROM pacient p JOIN jhi_user u ON u.id = p.user_id WHERE u.login = :login"
-    )
+    @Query("SELECT p.* FROM pacient p JOIN jhi_user u ON u.id = p.user_id WHERE u.login = :login")
     Mono<Pacient> findByUserLogin(String login);
 
     @Override

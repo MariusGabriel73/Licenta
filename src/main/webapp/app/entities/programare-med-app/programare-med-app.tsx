@@ -163,9 +163,13 @@ export const ProgramareMedApp = () => {
                   <td>
                     {programare.pacient ? (
                       <Link to={`/pacient-med-app/${programare.pacient.id}`}>
-                        {programare.pacient.user
-                          ? `${programare.pacient.user.lastName} ${programare.pacient.user.firstName}`
-                          : `Pacient (CNP: ${programare.pacient.cnp})`}
+                        {programare.pacient.user?.lastName || programare.pacient.user?.firstName
+                          ? `${programare.pacient.user.lastName || ''} ${programare.pacient.user.firstName || ''}`.trim()
+                          : programare.pacient.user?.login
+                            ? `Pacient: ${programare.pacient.user.login}`
+                            : programare.pacient.cnp
+                              ? `Pacient (CNP: ${programare.pacient.cnp})`
+                              : `Pacient #${programare.pacient.id}`}
                       </Link>
                     ) : (
                       ''

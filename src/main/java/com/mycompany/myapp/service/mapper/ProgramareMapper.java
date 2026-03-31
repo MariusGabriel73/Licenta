@@ -14,18 +14,30 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Programare} and its DTO {@link ProgramareDTO}.
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(
+    componentModel = "spring",
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    uses = { FisaMedicalaMapper.class, RaportProgramareMapper.class }
+)
 public interface ProgramareMapper extends EntityMapper<ProgramareDTO, Programare> {
     @Override
     @Mapping(target = "pacient", source = "pacient", qualifiedByName = "pacientId")
     @Mapping(target = "medic", source = "medic", qualifiedByName = "medicId")
     @Mapping(target = "clinica", source = "clinica", qualifiedByName = "clinicaId")
+    @Mapping(target = "fisaMedicala", source = "fisaMedicala")
+    @Mapping(target = "raportProgramare", source = "raportProgramare")
+    @Mapping(target = "pacientId", source = "pacientId")
+    @Mapping(target = "medicId", source = "medicId")
+    @Mapping(target = "clinicaId", source = "clinicaId")
     ProgramareDTO toDto(Programare s);
 
     @Override
-    @Mapping(target = "pacientId", source = "pacient.id")
-    @Mapping(target = "medicId", source = "medic.id")
-    @Mapping(target = "clinicaId", source = "clinica.id")
+    @Mapping(target = "pacientId", source = "pacientId")
+    @Mapping(target = "medicId", source = "medicId")
+    @Mapping(target = "clinicaId", source = "clinicaId")
+    @Mapping(target = "pacient", ignore = true)
+    @Mapping(target = "medic", ignore = true)
+    @Mapping(target = "clinica", ignore = true)
     @Mapping(target = "fisaMedicala", ignore = true)
     @Mapping(target = "raportProgramare", ignore = true)
     Programare toEntity(ProgramareDTO dto);
@@ -38,6 +50,8 @@ public interface ProgramareMapper extends EntityMapper<ProgramareDTO, Programare
     @Named("pacientId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "cnp", source = "cnp")
+    @Mapping(target = "telefon", source = "telefon")
     @Mapping(target = "user", source = "user", qualifiedByName = "userId")
     PacientDTO toDtoPacientId(Pacient pacient);
 
@@ -52,6 +66,7 @@ public interface ProgramareMapper extends EntityMapper<ProgramareDTO, Programare
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "nume", source = "nume")
+    @Mapping(target = "locatie", source = "locatie")
     ClinicaDTO toDtoClinicaId(Clinica clinica);
 
     @Named("userId")

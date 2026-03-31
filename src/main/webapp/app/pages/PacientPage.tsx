@@ -22,6 +22,7 @@ import {
   type ID,
 } from 'app/shared/api/pacient-api';
 import { useAppSelector } from 'app/config/store';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 const SLOT_MINUTES = 30;
 
@@ -100,6 +101,449 @@ function buildSlots(programs: Program[], selectedDate: string, taken: Programare
   return Array.from(unique.values());
 }
 
+interface BookingFormProps {
+  locatii: Locatie[];
+  clinici: Clinica[];
+  specializari: Specializare[];
+  medici: Medic[];
+  loading: boolean;
+  isAuthenticated: boolean;
+  pacientId: ID | undefined;
+  locatieId: ID | undefined;
+  clinicaId: ID | undefined;
+  specializareId: ID | undefined;
+  medicId: ID | undefined;
+  selectedDate: string;
+  selectedSlotIso: string;
+  observatii: string;
+  rescheduleId: ID | null;
+  slots: { iso: string; label: string; disabled: boolean }[];
+  setLocatieId: (id: ID | undefined) => void;
+  setClinicaId: (id: ID | undefined) => void;
+  setSpecializareId: (id: ID | undefined) => void;
+  setMedicId: (id: ID | undefined) => void;
+  setSelectedDate: (d: string) => void;
+  setSelectedSlotIso: (s: string) => void;
+  setObservatii: (o: string) => void;
+  setRescheduleId: (id: ID | null) => void;
+  handleCreateOrUpdate: () => void;
+}
+
+const BookingForm: React.FC<BookingFormProps> = props => {
+  const {
+    locatii,
+    clinici,
+    specializari,
+    medici,
+    loading,
+    isAuthenticated,
+    pacientId,
+    locatieId,
+    clinicaId,
+    specializareId,
+    medicId,
+    selectedDate,
+    selectedSlotIso,
+    observatii,
+    rescheduleId,
+    slots,
+    setLocatieId,
+    setClinicaId,
+    setSpecializareId,
+    setMedicId,
+    setSelectedDate,
+    setSelectedSlotIso,
+    setObservatii,
+    setRescheduleId,
+    handleCreateOrUpdate,
+  } = props;
+
+  return (
+    <div className="card mb-5 glass-panel hover-lift border-0 p-2 p-md-4">
+      <div className="card-body">
+        <div className="row g-4">
+          {/* Step 1: Locatie */}
+          <div className="col-md-3">
+            <label className="form-label fw-semibold">1. Locație</label>
+            <select
+              className="form-select"
+              value={locatieId ?? ''}
+              onChange={e => {
+                const val = e.target.value ? Number(e.target.value) : undefined;
+                setLocatieId(val);
+                setClinicaId(undefined);
+                setSpecializareId(undefined);
+                setMedicId(undefined);
+                setSelectedSlotIso('');
+              }}
+            >
+              <option value="">— alege orașul —</option>
+              {locatii.map(l => (
+                <option key={l.id} value={l.id}>
+                  {l.oras ? l.oras : (l.adresa ?? `Locația #${l.id}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Step 2: Clinica */}
+          <div className="col-md-3">
+            <label className="form-label fw-semibold">2. Clinică</label>
+            <select
+              className="form-select"
+              value={clinicaId ?? ''}
+              onChange={e => {
+                const val = e.target.value ? Number(e.target.value) : undefined;
+                setClinicaId(val);
+                setSpecializareId(undefined);
+                setMedicId(undefined);
+                setSelectedSlotIso('');
+              }}
+              disabled={!locatieId || clinici.length === 0}
+            >
+              <option value="">
+                {!locatieId ? '← Alege locația' : clinici.length === 0 ? 'Nicio clinică în această locație' : '— alege clinica —'}
+              </option>
+              {clinici.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.nume}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Step 3: Sectie */}
+          <div className="col-md-3">
+            <label className="form-label fw-semibold">3. Secție medicală</label>
+            <select
+              className="form-select"
+              value={specializareId ?? ''}
+              onChange={e => {
+                const val = e.target.value ? Number(e.target.value) : undefined;
+                setSpecializareId(val);
+                setMedicId(undefined);
+                setSelectedSlotIso('');
+              }}
+              disabled={!clinicaId}
+            >
+              <option value="">{!clinicaId ? '← Alege clinica' : '— alege secția —'}</option>
+              {specializari.map(s => (
+                <option key={s.id} value={s.id}>
+                  {s.nume}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Step 4: Medic */}
+          <div className="col-md-3">
+            <label className="form-label fw-semibold">4. Medic</label>
+            <select
+              className="form-select"
+              value={medicId ?? ''}
+              onChange={e => {
+                const val = e.target.value ? Number(e.target.value) : undefined;
+                setMedicId(val);
+                setSelectedSlotIso('');
+              }}
+              disabled={!clinicaId || !specializareId || medici.length === 0}
+            >
+              <option value="">
+                {!clinicaId
+                  ? '← Alege clinica'
+                  : !specializareId
+                    ? '← Alege secția'
+                    : medici.length === 0
+                      ? 'Niciun medic disponibil'
+                      : '— alege medicul —'}
+              </option>
+              {medici.map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.user ? `Dr. ${m.user.lastName ?? ''} ${m.user.firstName ?? ''}`.trim() : `Medic #${m.id}`}
+                  {m.gradProfesional ? ` — ${m.gradProfesional}` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Date + Observations */}
+          <div className="col-md-6">
+            <label className="form-label">Data</label>
+            <input
+              type="date"
+              className="form-control"
+              value={selectedDate}
+              onChange={e => {
+                setSelectedDate(e.target.value);
+                setSelectedSlotIso('');
+              }}
+              disabled={!medicId}
+              min={dayjs().format('YYYY-MM-DD')}
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">
+              Observații (opțional)
+              {rescheduleId && <small className="text-muted ms-2">(Nu pot fi modificate la reprogramare)</small>}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={observatii}
+              onChange={e => setObservatii(e.target.value)}
+              placeholder="Simptome, preferințe, etc."
+              disabled={!!rescheduleId}
+            />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="form-label d-block">Intervale disponibile</label>
+          {!medicId || !selectedDate ? (
+            <div className="text-muted">Selectează medicul și data pentru a vedea intervalele.</div>
+          ) : slots.length === 0 ? (
+            <div className="text-danger">Nu există intervale disponibile pentru ziua selectată.</div>
+          ) : (
+            <div className="d-flex flex-wrap gap-2">
+              {slots.map(s => (
+                <button
+                  key={s.iso}
+                  type="button"
+                  className={`btn rounded-pill btn-sm ${selectedSlotIso === s.iso ? 'btn-primary' : 'btn-outline-primary'}`}
+                  disabled={s.disabled}
+                  onClick={() => setSelectedSlotIso(s.iso)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4">
+          <button
+            className="btn btn-success"
+            disabled={loading || !isAuthenticated || !pacientId || !medicId || !locatieId || !selectedSlotIso}
+            onClick={handleCreateOrUpdate}
+          >
+            {rescheduleId ? 'Reprogramează' : 'Programează'}
+          </button>
+          {rescheduleId && (
+            <button
+              className="btn btn-link ms-2"
+              onClick={() => {
+                setRescheduleId(null);
+                setSelectedSlotIso('');
+              }}
+            >
+              Renunță la reprogramare
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface AppointmentTableProps {
+  appointments: Programare[];
+  rescheduleId: ID | null;
+  startReschedule: (a: Programare) => void;
+  handleCancel: (a: Programare) => void;
+  onViewPrescription: (a: Programare) => void;
+}
+
+const AppointmentTable: React.FC<AppointmentTableProps> = ({
+  appointments,
+  rescheduleId,
+  startReschedule,
+  handleCancel,
+  onViewPrescription,
+}) => {
+  if (appointments.length === 0) {
+    return (
+      <div className="card glass-panel border-0 p-4 text-center mt-4">
+        <div className="card-body text-muted">
+          <span className="display-6 d-block mb-3">📅</span>
+          Nu ai nicio programare activă momentan.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card glass-panel hover-lift border-0 p-3 mt-4">
+      <div className="card-body">
+        <div className="table-responsive">
+          <table className="table table-borderless table-hover align-middle mt-2">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Ora</th>
+                <th>Medic</th>
+                <th>Locație</th>
+                <th>Status</th>
+                <th style={{ width: 220 }}>Acțiuni</th>
+              </tr>
+            </thead>
+            <tbody>
+              {appointments.map(a => {
+                const d = dayjs(a.dataProgramare);
+                const past = d.isBefore(dayjs());
+                return (
+                  <tr key={a.id}>
+                    <td>{d.format('YYYY-MM-DD')}</td>
+                    <td>{d.format('HH:mm')}</td>
+                    <td>
+                      {a.medic?.user
+                        ? `Dr. ${a.medic.user.lastName ?? ''} ${a.medic.user.firstName ?? ''}`.trim()
+                        : a.medicId
+                          ? `Medic #${a.medicId}`
+                          : '-'}
+                    </td>
+                    <td>
+                      {a.clinica ? (
+                        <>
+                          <div className="fw-bold">{a.clinica.nume}</div>
+                          {a.clinica.locatie && (
+                            <small className="text-muted">
+                              {a.clinica.locatie.oras ?? ''}
+                              {a.clinica.locatie.oras && a.clinica.locatie.adresa ? ' — ' : ''}
+                              {a.clinica.locatie.adresa ?? ''}
+                            </small>
+                          )}
+                        </>
+                      ) : a.clinicaId ? (
+                        `Clinic #${a.clinicaId}`
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                    <td>
+                      <span
+                        className={
+                          a.status === ProgramareStatus.ACTIVA
+                            ? 'badge rounded-pill bg-soft-success px-3 py-2'
+                            : a.status === ProgramareStatus.ANULATA
+                              ? 'badge rounded-pill bg-soft-danger px-3 py-2'
+                              : 'badge rounded-pill bg-soft-primary px-3 py-2'
+                        }
+                      >
+                        {a.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <button
+                          className={`btn btn-sm rounded-pill fw-semibold ${rescheduleId === a.id ? 'btn-primary' : 'btn-outline-primary'}`}
+                          disabled={a.status !== ProgramareStatus.ACTIVA || past}
+                          onClick={() => startReschedule(a)}
+                        >
+                          {rescheduleId === a.id ? 'În curs...' : 'Reprogramează'}
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger rounded-pill fw-semibold border-0 bg-soft-danger shadow-none"
+                          disabled={a.status !== ProgramareStatus.ACTIVA || past}
+                          onClick={() => handleCancel(a)}
+                        >
+                          Anulează
+                        </button>
+                        {a.fisaMedicala && (
+                          <button
+                            className="btn btn-sm btn-primary rounded-pill fw-semibold d-flex align-items-center shadow-sm"
+                            onClick={() => onViewPrescription(a)}
+                          >
+                            Rețetă
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface PrescriptionModalProps {
+  isOpen: boolean;
+  toggle: () => void;
+  appointment: Programare | null;
+}
+
+const PrescriptionModal: React.FC<PrescriptionModalProps> = ({ isOpen, toggle, appointment }) => {
+  return (
+    <Modal isOpen={isOpen} toggle={toggle} size="lg" centered className="glass-modal">
+      <ModalHeader toggle={toggle} className="border-0 pb-0">
+        <div className="d-flex align-items-center">
+          <div>
+            <h4 className="m-0 text-primary fw-bold">Fișă Medicală / Rețetă</h4>
+            <small className="text-muted">Emisă la data de {dayjs(appointment?.dataProgramare).format('DD.MM.YYYY')}</small>
+          </div>
+        </div>
+      </ModalHeader>
+      <ModalBody className="py-4 px-4">
+        <div className="row g-4">
+          <div className="col-md-6">
+            <div className="p-3 bg-soft-primary rounded-4 border-0 h-100">
+              <label className="small text-uppercase text-muted fw-bold mb-1 d-block">Medic Curant</label>
+              <div className="h6 mb-0 fw-bold text-dark">
+                {appointment?.medic?.user ? `Dr. ${appointment.medic.user.lastName} ${appointment.medic.user.firstName}` : '-'}
+              </div>
+              <small className="text-secondary">{appointment?.medic?.gradProfesional}</small>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="p-3 bg-soft-primary rounded-4 border-0 h-100">
+              <label className="small text-uppercase text-muted fw-bold mb-1 d-block">Locație</label>
+              <div className="h6 mb-0 fw-bold text-dark">{appointment?.clinica?.nume}</div>
+              <small className="text-secondary">
+                {appointment?.clinica?.locatie?.adresa}, {appointment?.clinica?.locatie?.oras}
+              </small>
+            </div>
+          </div>
+
+          <div className="col-12 mt-4">
+            <div className="mb-4">
+              <h6 className="fw-bold text-dark d-flex align-items-center">Diagnostic</h6>
+              <div className="p-3 bg-white rounded-4 border border-light-subtle shadow-sm min-h-50">
+                {appointment?.fisaMedicala?.diagnostic || 'Nespecificat'}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <h6 className="fw-bold text-dark d-flex align-items-center">Tratament și Rețetă</h6>
+              <div className="p-3 bg-soft-success rounded-4 text-dark min-h-100 whitespace-pre-wrap shadow-sm">
+                {appointment?.fisaMedicala?.tratament || 'Nespecificat'}
+              </div>
+            </div>
+
+            <div className="mb-0">
+              <h6 className="fw-bold text-dark d-flex align-items-center">Recomandări</h6>
+              <div className="p-3 bg-soft-warning rounded-4 text-dark min-h-50 shadow-sm">
+                {appointment?.fisaMedicala?.recomandari || 'Nicio recomandare suplimentară.'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ModalBody>
+      <ModalFooter className="border-0 bg-light bg-opacity-50 py-3">
+        <Button color="secondary" outline className="rounded-pill px-4 border-0" onClick={toggle}>
+          Închide
+        </Button>
+        <Button color="primary" className="rounded-pill px-4 shadow-sm" onClick={() => window.print()}>
+          Printează Rețeta
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
 export default function PacientPage() {
   const account = useAppSelector(state => state.authentication.account);
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
@@ -125,6 +569,9 @@ export default function PacientPage() {
   const [observatii, setObservatii] = useState<string>('');
 
   const [rescheduleId, setRescheduleId] = useState<ID | null>(null);
+
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedAppointmentForView, setSelectedAppointmentForView] = useState<Programare | null>(null);
 
   // Load all locations + specializations on mount
   useEffect(() => {
@@ -187,23 +634,17 @@ export default function PacientPage() {
     })();
   }, [clinicaId, specializareId]);
 
-  // Step 1: Select location
-  // Step 2: Select clinic (filtered by Step 1 location)
-  // Therefore, the location of the selected clinic is ALWAYS the value of locatieId from Step 1.
   const clinicLocatieId = locatieId;
 
   useEffect(() => {
-    // când am medic + locația clinicii -> aduc programul
     (async () => {
       if (!medicId || !clinicLocatieId) {
         setPrograms([]);
         return;
       }
-      console.warn('DEBUG: Fetching programs for medicId:', medicId, 'and clinicLocatieId:', clinicLocatieId);
       setLoading(true);
       try {
         const p = await getPrograms(medicId, clinicLocatieId);
-        console.warn('DEBUG: Fetched programs count:', p.length);
         setPrograms(p);
       } finally {
         setLoading(false);
@@ -212,7 +653,6 @@ export default function PacientPage() {
   }, [medicId, clinicLocatieId]);
 
   useEffect(() => {
-    // când se schimbă data/medic/locația clinicii -> aduc programările deja făcute în ziua respectivă
     (async () => {
       if (!selectedDate || !medicId || !clinicLocatieId) {
         setTakenForDate([]);
@@ -232,7 +672,10 @@ export default function PacientPage() {
   const slots = useMemo(() => buildSlots(programs, selectedDate, takenForDate), [programs, selectedDate, takenForDate]);
 
   async function handleCreateOrUpdate() {
-    if (!pacientId || !medicId || !clinicLocatieId || !selectedSlotIso) return;
+    if (!pacientId || !medicId || !clinicaId || !clinicLocatieId || !selectedSlotIso) {
+      alert(`Lipsesc date necesare!`);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -240,27 +683,23 @@ export default function PacientPage() {
         await updateAppointment(rescheduleId, {
           dataProgramare: selectedSlotIso,
           medicId,
-          locatieId: clinicLocatieId,
+          clinicaId,
           status: ProgramareStatus.ACTIVA,
           observatii,
         });
         setRescheduleId(null);
+        alert('Programarea a fost reprogamată cu succes!');
       } else {
-        await createAppointment({
-          pacientId,
-          medicId,
-          locatieId: clinicLocatieId,
-          dataProgramare: selectedSlotIso,
-          observatii,
-        });
+        await createAppointment({ pacientId, medicId, clinicaId, dataProgramare: selectedSlotIso, observatii });
+        alert('Programarea a fost creată cu succes!');
       }
-      // refresh lista mea
       const my = await getMyAppointments(pacientId);
       setAppointments(my);
-      // reset slot selectat
-      // păstrăm selecțiile curente (clinică/locație etc.) pentru a putea continua rapid
       setSelectedSlotIso('');
       setObservatii('');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Eroare necunoscută';
+      alert(`Eroare la salvare: ${msg}`);
     } finally {
       setLoading(false);
     }
@@ -275,7 +714,6 @@ export default function PacientPage() {
         const my = await getMyAppointments(pacientId);
         setAppointments(my);
       }
-      // dacă anulez slot din ziua curentă, reîncarc taken
       if (a.medicId && a.locatieId && selectedDate) {
         const { startIso, endIso } = toDayRangeISO(selectedDate);
         const taken = await getAppointmentsForMedicOnDate(a.medicId, a.locatieId, startIso, endIso);
@@ -288,288 +726,70 @@ export default function PacientPage() {
 
   function startReschedule(a: Programare) {
     setRescheduleId(a.id);
-    // preselectez medic/locație/date în funcție de programarea selectată
     if (a.medicId) setMedicId(a.medicId);
-    if (a.locatieId) setLocatieId(a.locatieId);
-    const dateStr = dayjs(a.dataProgramare).format('YYYY-MM-DD');
-    setSelectedDate(dateStr);
+
+    const locId = a.locatieId || a.clinica?.locatie?.id;
+    if (locId) setLocatieId(locId);
+
+    if (a.clinicaId) setClinicaId(a.clinicaId);
+
+    setSelectedDate(dayjs(a.dataProgramare).format('YYYY-MM-DD'));
     setSelectedSlotIso(a.dataProgramare);
+    setObservatii(a.observatii || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   return (
-    <div className="container py-4 fade-in-up">
-      <h2 className="mb-4">Programare consultație</h2>
+    <div className="container py-5 fade-in-up" style={{ maxWidth: '1100px' }}>
+      <div className="d-flex align-items-center mb-5">
+        <div>
+          <h2 className="mb-0 fw-bold text-dark">Gestionează Programările</h2>
+          <p className="text-secondary mb-0">Programează o nouă consultație sau administrează-le pe cele existente.</p>
+        </div>
+      </div>
 
       {!isAuthenticated && <div className="alert alert-warning">Trebuie să fii autentificat pentru a face o programare.</div>}
-
       {isAuthenticated && !pacientId && <div className="alert alert-info">Îți căutăm profilul de pacient...</div>}
 
-      <div className="card mb-4 glass-panel hover-lift border-0">
-        <div className="card-body">
-          <div className="row g-3">
-            {/* Step 1: Locatie */}
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">1. Locație</label>
-              <select
-                className="form-select"
-                value={locatieId ?? ''}
-                onChange={e => {
-                  const val = e.target.value ? Number(e.target.value) : undefined;
-                  setLocatieId(val);
-                  // reset all dependent
-                  setClinicaId(undefined);
-                  setClinici([]);
-                  setSpecializareId(undefined);
-                  setMedicId(undefined);
-                  setMedici([]);
-                  setPrograms([]);
-                  setSelectedSlotIso('');
-                }}
-              >
-                <option value="">— alege orașul —</option>
-                {locatii.map(l => (
-                  <option key={l.id} value={l.id}>
-                    {l.oras ? l.oras : (l.adresa ?? `Locația #${l.id}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Step 2: Clinica (filtered by locatie) */}
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">2. Clinică</label>
-              <select
-                className="form-select"
-                value={clinicaId ?? ''}
-                onChange={e => {
-                  const val = e.target.value ? Number(e.target.value) : undefined;
-                  setClinicaId(val);
-                  setSpecializareId(undefined);
-                  setMedicId(undefined);
-                  setMedici([]);
-                  setPrograms([]);
-                  setSelectedSlotIso('');
-                }}
-                disabled={!locatieId || clinici.length === 0}
-              >
-                <option value="">
-                  {!locatieId ? '← Alege locația' : clinici.length === 0 ? 'Nicio clinică în această locație' : '— alege clinica —'}
-                </option>
-                {clinici.map(c => (
-                  <option key={c.id} value={c.id}>
-                    {c.nume}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Step 3: Sectie (all sections, filter doctors on select) */}
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">3. Secție medicală</label>
-              <select
-                className="form-select"
-                value={specializareId ?? ''}
-                onChange={e => {
-                  const val = e.target.value ? Number(e.target.value) : undefined;
-                  setSpecializareId(val);
-                  setMedicId(undefined);
-                  setPrograms([]);
-                  setSelectedSlotIso('');
-                }}
-                disabled={!clinicaId}
-              >
-                <option value="">{!clinicaId ? '← Alege clinica' : '— alege secția —'}</option>
-                {specializari.map(s => (
-                  <option key={s.id} value={s.id}>
-                    {s.nume}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Step 4: Medic */}
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">4. Medic</label>
-              <select
-                className="form-select"
-                value={medicId ?? ''}
-                onChange={e => {
-                  const val = e.target.value ? Number(e.target.value) : undefined;
-                  setMedicId(val);
-                  setPrograms([]);
-                  setSelectedSlotIso('');
-                }}
-                disabled={!clinicaId || !specializareId || medici.length === 0}
-              >
-                <option value="">
-                  {!clinicaId
-                    ? '← Alege clinica'
-                    : !specializareId
-                      ? '← Alege secția'
-                      : medici.length === 0
-                        ? 'Niciun medic disponibil'
-                        : '— alege medicul —'}
-                </option>
-                {medici.map(m => (
-                  <option key={m.id} value={m.id}>
-                    {m.user ? `Dr. ${m.user.lastName ?? ''} ${m.user.firstName ?? ''}`.trim() : `Medic #${m.id}`}
-                    {m.gradProfesional ? ` — ${m.gradProfesional}` : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Date + Observations */}
-            <div className="col-md-6">
-              <label className="form-label">Data</label>
-              <input
-                type="date"
-                className="form-control"
-                value={selectedDate}
-                onChange={e => {
-                  setSelectedDate(e.target.value);
-                  setSelectedSlotIso('');
-                }}
-                disabled={!medicId}
-                min={dayjs().format('YYYY-MM-DD')}
-              />
-            </div>
-
-            <div className="col-md-6">
-              <label className="form-label">Observații (opțional)</label>
-              <input
-                type="text"
-                className="form-control"
-                value={observatii}
-                onChange={e => setObservatii(e.target.value)}
-                placeholder="Simptome, preferințe, etc."
-              />
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <label className="form-label d-block">Intervale disponibile</label>
-            {!medicId || !selectedDate ? (
-              <div className="text-muted">Selectează medicul și data pentru a vedea intervalele.</div>
-            ) : slots.length === 0 ? (
-              <div className="text-danger">Nu există intervale disponibile pentru ziua selectată.</div>
-            ) : (
-              <div className="d-flex flex-wrap gap-2">
-                {slots.map(s => (
-                  <button
-                    key={s.iso}
-                    type="button"
-                    className={`btn rounded-pill btn-sm ${selectedSlotIso === s.iso ? 'btn-primary' : 'btn-outline-primary'}`}
-                    disabled={s.disabled}
-                    onClick={() => setSelectedSlotIso(s.iso)}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="mt-4">
-            <button
-              className="btn btn-success"
-              disabled={loading || !isAuthenticated || !pacientId || !medicId || !locatieId || !selectedSlotIso}
-              onClick={handleCreateOrUpdate}
-            >
-              {rescheduleId ? 'Reprogramează' : 'Programează'}
-            </button>
-            {rescheduleId && (
-              <button
-                className="btn btn-link ms-2"
-                onClick={() => {
-                  setRescheduleId(null);
-                  setSelectedSlotIso('');
-                }}
-              >
-                Renunță la reprogramare
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <BookingForm
+        locatii={locatii}
+        clinici={clinici}
+        specializari={specializari}
+        medici={medici}
+        loading={loading}
+        isAuthenticated={isAuthenticated}
+        pacientId={pacientId}
+        locatieId={locatieId}
+        clinicaId={clinicaId}
+        specializareId={specializareId}
+        medicId={medicId}
+        selectedDate={selectedDate}
+        selectedSlotIso={selectedSlotIso}
+        observatii={observatii}
+        rescheduleId={rescheduleId}
+        slots={slots}
+        setLocatieId={setLocatieId}
+        setClinicaId={setClinicaId}
+        setSpecializareId={setSpecializareId}
+        setMedicId={setMedicId}
+        setSelectedDate={setSelectedDate}
+        setSelectedSlotIso={setSelectedSlotIso}
+        setObservatii={setObservatii}
+        setRescheduleId={setRescheduleId}
+        handleCreateOrUpdate={handleCreateOrUpdate}
+      />
 
       <h3 className="mb-3">Programările mele</h3>
-      <div className="card glass-panel hover-lift border-0">
-        <div className="card-body">
-          {appointments.length === 0 ? (
-            <div className="text-muted">Nu ai nicio programare.</div>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-borderless table-hover align-middle mt-2">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Ora</th>
-                    <th>Medic</th>
-                    <th>Locație</th>
-                    <th>Status</th>
-                    <th style={{ width: 220 }}>Acțiuni</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map(a => {
-                    const d = dayjs(a.dataProgramare);
-                    const past = d.isBefore(dayjs());
-                    return (
-                      <tr key={a.id}>
-                        <td>{d.format('YYYY-MM-DD')}</td>
-                        <td>{d.format('HH:mm')}</td>
-                        <td>
-                          {a.medic?.user
-                            ? `Dr. ${a.medic.user.lastName ?? ''} ${a.medic.user.firstName ?? ''}`.trim()
-                            : a.medicId
-                              ? `Medic #${a.medicId}`
-                              : '-'}
-                        </td>
-                        <td>
-                          {a.locatie ? (a.locatie.oras ?? a.locatie.adresa ?? `#${a.locatieId}`) : a.locatieId ? `#${a.locatieId}` : '-'}
-                        </td>
-                        <td>
-                          <span
-                            className={
-                              a.status === ProgramareStatus.ACTIVA
-                                ? 'badge bg-success'
-                                : a.status === ProgramareStatus.ANULATA
-                                  ? 'badge bg-secondary'
-                                  : 'badge bg-info'
-                            }
-                          >
-                            {a.status}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="d-flex gap-2">
-                            <button
-                              className="btn btn-outline-primary btn-sm"
-                              disabled={a.status !== ProgramareStatus.ACTIVA || past}
-                              onClick={() => startReschedule(a)}
-                            >
-                              Reprogramează
-                            </button>
-                            <button
-                              className="btn btn-outline-danger btn-sm"
-                              disabled={a.status !== ProgramareStatus.ACTIVA || past}
-                              onClick={() => handleCancel(a)}
-                            >
-                              Anulează
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+      <AppointmentTable
+        appointments={appointments}
+        rescheduleId={rescheduleId}
+        startReschedule={startReschedule}
+        handleCancel={handleCancel}
+        onViewPrescription={a => {
+          setSelectedAppointmentForView(a);
+          setShowViewModal(true);
+        }}
+      />
 
       {loading && (
         <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 1080 }}>
@@ -580,6 +800,8 @@ export default function PacientPage() {
           </div>
         </div>
       )}
+
+      <PrescriptionModal isOpen={showViewModal} toggle={() => setShowViewModal(false)} appointment={selectedAppointmentForView} />
     </div>
   );
 }

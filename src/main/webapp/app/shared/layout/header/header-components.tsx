@@ -31,3 +31,12 @@ export const Home = () => (
     </NavLink>
   </NavItem>
 );
+
+export const Prescriptions = () => (
+  <NavItem>
+    <NavLink tag={Link} to="/prescriptions" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="stethoscope" />
+      <span>Rețete</span>
+    </NavLink>
+  </NavItem>
+);

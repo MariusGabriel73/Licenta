@@ -1,13 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 // Override Bootstrap variables
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules
 @import 'bootstrap/scss/bootstrap';
 
+// ==========================================================================
+// 🚀 Modern 2026 Core Aesthetics
+// ==========================================================================
+
+// Global Reset
+body {
+  background-color: #f1f5f9; // Slate 100
+  background-image:
+    radial-gradient(at 0% 0%, hsla(213, 94%, 68%, 0.15) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(214, 32%, 91%, 0.8) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(213, 94%, 80%, 0.15) 0, transparent 50%);
+  background-attachment: fixed;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 // Animations & Micro-interactions
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -16,50 +35,117 @@
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-// Glassmorphism component
+// Sleek Slate Glassmorphism Component
 .glass-panel {
-  background: rgba(255, 255, 255, 0.75) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.05);
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: $border-radius-lg;
+  box-shadow:
+    0 4px 6px -1px rgba(15, 23, 42, 0.05),
+    0 20px 25px -5px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-// Interactive Hover
+// Modern Interaction Hover
 .hover-lift {
-  transition:
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform, box-shadow;
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow:
-      0 12px 20px -3px rgba(15, 23, 42, 0.08),
-      0 8px 10px -4px rgba(15, 23, 42, 0.04);
+      0 20px 25px -5px rgba(0, 0, 0, 0.05),
+      0 10px 10px -5px rgba(0, 0, 0, 0.02);
   }
 }
 
 // Elegant Inputs
 .form-control,
 .form-select {
-  transition: all 0.2s ease-in-out;
-  background-color: #f8fafc;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  color: #1e293b;
+  box-shadow: inset 0 2px 4px 0 rgba(15, 23, 42, 0.02);
+
+  &:hover {
+    border-color: #94a3b8;
+    background: rgba(255, 255, 255, 0.9);
+  }
 
   &:focus {
-    background-color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+    background: #ffffff;
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba($primary, 0.15) !important;
   }
 }
 
-body {
-  background: #f1f5f9; // slightly soft clinical background
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+// Modern Soft Buttons
+.btn {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// Premium Primary Button Gradient
+.btn-primary {
+  background: linear-gradient(135deg, $primary 0%, darken($primary, 8%) 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba($primary, 0.25);
+  color: white !important;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba($primary, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+// Modern Success Button
+.btn-success {
+  background: linear-gradient(135deg, $success 0%, darken($success, 8%) 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba($success, 0.25);
+  color: white !important;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba($success, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+// Modern Danger Outline
+.btn-outline-danger {
+  border-width: 2px;
+  background-color: transparent;
+
+  &:hover {
+    background-color: rgba($danger, 0.08) !important;
+    color: $danger !important;
+    border-color: $danger !important;
+  }
+}
+
+// Elegant Text / Headings
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.02em;
+  color: #0f172a;
 }
 
 a {
@@ -123,6 +209,35 @@ Browser Upgrade Prompt
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
+}
+
+// ==========================================================================
+// Soft UI Color Utilities (Pastels)
+// ==========================================================================
+.bg-soft-primary {
+  background-color: rgba($primary, 0.08) !important;
+  color: darken($primary, 15%) !important;
+}
+
+.bg-soft-success {
+  background-color: rgba($success, 0.1) !important;
+  color: darken($success, 10%) !important;
+  border: 1px solid rgba($success, 0.2);
+}
+
+.bg-soft-warning {
+  background-color: rgba($warning, 0.15) !important;
+  color: darken($warning, 20%) !important;
+  border: 1px solid rgba($warning, 0.3);
+}
+
+.bg-soft-danger {
+  background-color: rgba($danger, 0.1) !important;
+  color: darken($danger, 15%) !important;
+}
+
+.text-primary-soft {
+  color: lighten($primary, 10%) !important;
 }
 
 /* ==========================================================================

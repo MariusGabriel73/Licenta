@@ -10,6 +10,7 @@ import org.springframework.data.r2dbc.convert.R2dbcConverter;
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.repository.support.SimpleR2dbcRepository;
+import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.sql.Comparison;
 import org.springframework.data.relational.core.sql.Condition;
 import org.springframework.data.relational.core.sql.Conditions;
@@ -45,7 +46,9 @@ class LocatieRepositoryInternalImpl extends SimpleR2dbcRepository<Locatie, Long>
         R2dbcConverter converter
     ) {
         super(
-            new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Locatie.class)),
+            new MappingRelationalEntityInformation<Locatie, Long>(
+                (RelationalPersistentEntity<Locatie>) converter.getMappingContext().getRequiredPersistentEntity(Locatie.class)
+            ),
             entityOperations,
             converter
         );
@@ -77,6 +80,12 @@ class LocatieRepositoryInternalImpl extends SimpleR2dbcRepository<Locatie, Long>
     public Mono<Locatie> findById(Long id) {
         Comparison whereClause = Conditions.isEqual(entityTable.column("id"), Conditions.just(id.toString()));
         return createQuery(null, whereClause).one();
+    }
+
+    @Override
+    public Flux<Locatie> findByCliniciId(Long clinicaId) {
+        Condition whereClause = Conditions.just("id IN (SELECT locatie_id FROM clinica WHERE id = " + clinicaId + ")");
+        return createQuery(null, whereClause).all();
     }
 
     private Locatie process(Row row, RowMetadata metadata) {

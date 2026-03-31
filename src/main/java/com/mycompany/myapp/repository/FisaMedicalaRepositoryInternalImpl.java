@@ -11,6 +11,7 @@ import org.springframework.data.r2dbc.convert.R2dbcConverter;
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.repository.support.SimpleR2dbcRepository;
+import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.sql.Column;
 import org.springframework.data.relational.core.sql.Comparison;
 import org.springframework.data.relational.core.sql.Condition;
@@ -50,7 +51,9 @@ class FisaMedicalaRepositoryInternalImpl extends SimpleR2dbcRepository<FisaMedic
         R2dbcConverter converter
     ) {
         super(
-            new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(FisaMedicala.class)),
+            new MappingRelationalEntityInformation<FisaMedicala, Long>(
+                (RelationalPersistentEntity<FisaMedicala>) converter.getMappingContext().getRequiredPersistentEntity(FisaMedicala.class)
+            ),
             entityOperations,
             converter
         );

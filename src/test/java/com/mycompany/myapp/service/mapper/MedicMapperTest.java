@@ -12,7 +12,7 @@ class MedicMapperTest {
 
     @BeforeEach
     void setUp() {
-        medicMapper = new MedicMapperImpl();
+        medicMapper = org.mapstruct.factory.Mappers.getMapper(MedicMapper.class);
     }
 
     @Test

@@ -12,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
  * Programarea unui pacient.
  */
 @Table("programare")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Programare implements Serializable {
 
@@ -43,9 +44,11 @@ public class Programare implements Serializable {
     private Clinica clinica;
 
     @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "programare" }, allowSetters = true)
     private FisaMedicala fisaMedicala;
 
     @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "programare" }, allowSetters = true)
     private RaportProgramare raportProgramare;
 
     @Column("pacient_id")

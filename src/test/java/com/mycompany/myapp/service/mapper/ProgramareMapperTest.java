@@ -12,7 +12,17 @@ class ProgramareMapperTest {
 
     @BeforeEach
     void setUp() {
-        programareMapper = new ProgramareMapperImpl();
+        programareMapper = org.mapstruct.factory.Mappers.getMapper(ProgramareMapper.class);
+        org.springframework.test.util.ReflectionTestUtils.setField(
+            programareMapper,
+            "fisaMedicalaMapper",
+            org.mapstruct.factory.Mappers.getMapper(FisaMedicalaMapper.class)
+        );
+        org.springframework.test.util.ReflectionTestUtils.setField(
+            programareMapper,
+            "raportProgramareMapper",
+            org.mapstruct.factory.Mappers.getMapper(RaportProgramareMapper.class)
+        );
     }
 
     @Test

@@ -1,14 +1,18 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Clinica;
+import com.mycompany.myapp.domain.FisaMedicala;
 import com.mycompany.myapp.domain.Medic;
 import com.mycompany.myapp.domain.Pacient;
 import com.mycompany.myapp.domain.Programare;
+import com.mycompany.myapp.domain.RaportProgramare;
 import com.mycompany.myapp.repository.rowmapper.ClinicaRowMapper;
+import com.mycompany.myapp.repository.rowmapper.FisaMedicalaRowMapper;
+import com.mycompany.myapp.repository.rowmapper.LocatieRowMapper;
 import com.mycompany.myapp.repository.rowmapper.MedicRowMapper;
 import com.mycompany.myapp.repository.rowmapper.PacientRowMapper;
-import com.mycompany.myapp.repository.rowmapper.LocatieRowMapper;
 import com.mycompany.myapp.repository.rowmapper.ProgramareRowMapper;
+import com.mycompany.myapp.repository.rowmapper.RaportProgramareRowMapper;
 import com.mycompany.myapp.repository.rowmapper.UserRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
@@ -18,6 +22,7 @@ import org.springframework.data.r2dbc.convert.R2dbcConverter;
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.repository.support.SimpleR2dbcRepository;
+import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.sql.Column;
 import org.springframework.data.relational.core.sql.Comparison;
 import org.springframework.data.relational.core.sql.Condition;
@@ -47,16 +52,19 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
     private final ClinicaRowMapper clinicaMapper;
     private final LocatieRowMapper locatieMapper;
     private final ProgramareRowMapper programareMapper;
+    private final UserRowMapper userMapper;
+    private final FisaMedicalaRowMapper fisaMedicalaMapper;
+    private final RaportProgramareRowMapper raportProgramareMapper;
 
     private static final Table entityTable = Table.aliased("programare", EntityManager.ENTITY_ALIAS);
     private static final Table pacientTable = Table.aliased("pacient", "pacient");
-    private static final Table userPacientTable = Table.aliased("jhi_user", "user_pacient");
+    private static final Table userPacientTable = Table.aliased("jhi_user", "u_pacient");
     private static final Table medicTable = Table.aliased("medic", "medic");
-    private static final Table userMedicTable = Table.aliased("jhi_user", "user_medic");
-    private static final Table clinicaTable = Table.aliased("clinica", "clinica");
-    private static final Table locatieTable = Table.aliased("locatie", "locatie");
-
-    private final UserRowMapper userMapper;
+    private static final Table userMedicTable = Table.aliased("jhi_user", "u_medic");
+    private static final Table clinicaTable = Table.aliased("clinica", "c_joined");
+    private static final Table locatieTable = Table.aliased("locatie", "l_joined");
+    private static final Table fisaMedicalaTable = Table.aliased("fisa_medicala", "f_joined");
+    private static final Table raportProgramareTable = Table.aliased("raport_programare", "r_joined");
 
     public ProgramareRepositoryInternalImpl(
         R2dbcEntityTemplate template,
@@ -67,11 +75,15 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
         LocatieRowMapper locatieMapper,
         ProgramareRowMapper programareMapper,
         UserRowMapper userMapper,
+        FisaMedicalaRowMapper fisaMedicalaMapper,
+        RaportProgramareRowMapper raportProgramareMapper,
         R2dbcEntityOperations entityOperations,
         R2dbcConverter converter
     ) {
         super(
-            new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Programare.class)),
+            new MappingRelationalEntityInformation<Programare, Long>(
+                (RelationalPersistentEntity<Programare>) converter.getMappingContext().getRequiredPersistentEntity(Programare.class)
+            ),
             entityOperations,
             converter
         );
@@ -84,6 +96,8 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
         this.locatieMapper = locatieMapper;
         this.programareMapper = programareMapper;
         this.userMapper = userMapper;
+        this.fisaMedicalaMapper = fisaMedicalaMapper;
+        this.raportProgramareMapper = raportProgramareMapper;
     }
 
     @Override
@@ -93,12 +107,14 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
 
     RowsFetchSpec<Programare> createQuery(Pageable pageable, Condition whereClause) {
         List<Expression> columns = ProgramareSqlHelper.getColumns(entityTable, EntityManager.ENTITY_ALIAS);
-        columns.addAll(PacientSqlHelper.getColumns(pacientTable, "pacient"));
-        columns.addAll(UserSqlHelper.getColumns(userPacientTable, "user_pacient"));
-        columns.addAll(MedicSqlHelper.getColumns(medicTable, "medic"));
-        columns.addAll(UserSqlHelper.getColumns(userMedicTable, "user_medic"));
-        columns.addAll(ClinicaSqlHelper.getColumns(clinicaTable, "clinica"));
-        columns.addAll(LocatieSqlHelper.getColumns(locatieTable, "locatie"));
+        columns.addAll(PacientSqlHelper.getColumns(pacientTable, "p_joined"));
+        columns.addAll(MedicSqlHelper.getColumns(medicTable, "m_joined"));
+        columns.addAll(UserSqlHelper.getColumns(userPacientTable, "u_pacient"));
+        columns.addAll(UserSqlHelper.getColumns(userMedicTable, "u_medic"));
+        columns.addAll(ClinicaSqlHelper.getColumns(clinicaTable, "c_joined"));
+        columns.addAll(LocatieSqlHelper.getColumns(locatieTable, "l_joined"));
+        columns.addAll(FisaMedicalaSqlHelper.getColumns(fisaMedicalaTable, "f_joined"));
+        columns.addAll(RaportProgramareSqlHelper.getColumns(raportProgramareTable, "r_joined"));
         SelectFromAndJoinCondition selectFrom = Select.builder()
             .select(columns)
             .from(entityTable)
@@ -119,7 +135,13 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
             .equals(Column.create("id", clinicaTable))
             .leftOuterJoin(locatieTable)
             .on(Column.create("locatie_id", clinicaTable))
-            .equals(Column.create("id", locatieTable));
+            .equals(Column.create("id", locatieTable))
+            .leftOuterJoin(fisaMedicalaTable)
+            .on(Column.create("id", entityTable))
+            .equals(Column.create("programare_id", fisaMedicalaTable))
+            .leftOuterJoin(raportProgramareTable)
+            .on(Column.create("id", entityTable))
+            .equals(Column.create("programare_id", raportProgramareTable));
         // we do not support Criteria here for now as of https://github.com/jhipster/generator-jhipster/issues/18269
         String select = entityManager.createSelect(selectFrom, Programare.class, pageable, whereClause);
         return db.sql(select).map(this::process);
@@ -143,24 +165,49 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
         java.time.Instant fromDate,
         java.time.Instant toDate
     ) {
+        String fromStr = fromDate.toString();
+        String toStr = toDate.toString();
+
         Condition whereClause = Conditions.just(
-            "e.medic_id = " + medicId + " AND clinica.locatie_id = " + locatieId + " AND e.data_programare >= '" + fromDate.toString() + "' AND e.data_programare < '" + toDate.toString() + "'"
+            "e.medic_id = " +
+            medicId +
+            " AND c_joined.locatie_id = " +
+            locatieId +
+            " AND e.data_programare >= '" +
+            fromStr +
+            "'::timestamp AND e.data_programare < '" +
+            toStr +
+            "'::timestamp"
         );
         return createQuery(null, whereClause).all();
     }
 
     @Override
     public Flux<Programare> findAllByMedicUserLogin(String login, java.time.Instant fromDate, java.time.Instant toDate, Pageable pageable) {
-        Condition whereClause = Conditions.just("user_medic.login = '" + login + "' AND e.data_programare >= '" + fromDate.toString() + "' AND e.data_programare < '" + toDate.toString() + "'");
+        String fromStr = fromDate.toString();
+        String toStr = toDate.toString();
+
+        Condition whereClause = Conditions.just(
+            "u_medic.login = '" +
+            login +
+            "' AND e.data_programare >= '" +
+            fromStr +
+            "'::timestamp AND e.data_programare < '" +
+            toStr +
+            "'::timestamp"
+        );
         return createQuery(pageable, whereClause).all();
     }
 
     @Override
     public Mono<Long> countAllByMedicUserLogin(String login, java.time.Instant fromDate, java.time.Instant toDate) {
-        return db.sql("SELECT COUNT(DISTINCT e.id) FROM programare e " +
-            "LEFT OUTER JOIN medic medic ON e.medic_id = medic.id " +
-            "LEFT OUTER JOIN jhi_user user_medic ON medic.user_id = user_medic.id " +
-            "WHERE user_medic.login = :login AND e.data_programare >= :fromDate AND e.data_programare < :toDate")
+        return db
+            .sql(
+                "SELECT COUNT(DISTINCT e.id) FROM programare e " +
+                "LEFT OUTER JOIN medic medic ON e.medic_id = medic.id " +
+                "LEFT OUTER JOIN jhi_user user_medic ON medic.user_id = user_medic.id " +
+                "WHERE user_medic.login = :login AND e.data_programare >= :fromDate AND e.data_programare < :toDate"
+            )
             .bind("login", login)
             .bind("fromDate", fromDate)
             .bind("toDate", toDate)
@@ -168,27 +215,52 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
             .one();
     }
 
+    @Override
+    public Flux<Programare> findAllByPacientId(Long pacientId, Pageable pageable) {
+        Condition whereClause = Conditions.isEqual(entityTable.column("pacient_id"), Conditions.just(pacientId.toString()));
+        return createQuery(pageable, whereClause).all();
+    }
+
+    @Override
+    public Mono<Long> countAllByPacientId(Long pacientId) {
+        return db
+            .sql("SELECT COUNT(*) FROM programare WHERE pacient_id = :pacientId")
+            .bind("pacientId", pacientId)
+            .map((row, metadata) -> row.get(0, Long.class))
+            .one();
+    }
 
     private Programare process(Row row, RowMetadata metadata) {
         Programare entity = programareMapper.apply(row, "e");
 
-        Pacient pacient = pacientMapper.apply(row, "pacient");
-        if (pacient != null) {
-            pacient.setUser(userMapper.apply(row, "user_pacient"));
+        Pacient pacient = pacientMapper.apply(row, "p_joined");
+        if (pacient != null && pacient.getId() != null) {
+            pacient.setUser(userMapper.apply(row, "u_pacient"));
+            entity.setPacient(pacient);
         }
-        entity.setPacient(pacient);
 
-        Medic medic = medicMapper.apply(row, "medic");
-        if (medic != null) {
-            medic.setUser(userMapper.apply(row, "user_medic"));
+        Medic medic = medicMapper.apply(row, "m_joined");
+        if (medic != null && medic.getId() != null) {
+            medic.setUser(userMapper.apply(row, "u_medic"));
+            entity.setMedic(medic);
         }
-        entity.setMedic(medic);
 
-        Clinica clinica = clinicaMapper.apply(row, "clinica");
-        if (clinica != null) {
-            clinica.setLocatie(locatieMapper.apply(row, "locatie"));
+        Clinica clinica = clinicaMapper.apply(row, "c_joined");
+        if (clinica != null && clinica.getId() != null) {
+            clinica.setLocatie(locatieMapper.apply(row, "l_joined"));
+            entity.setClinica(clinica);
         }
-        entity.setClinica(clinica);
+
+        FisaMedicala fisaMedicala = fisaMedicalaMapper.apply(row, "f_joined");
+        if (fisaMedicala != null && fisaMedicala.getId() != null) {
+            entity.setFisaMedicala(fisaMedicala);
+        }
+
+        RaportProgramare raportProgramare = raportProgramareMapper.apply(row, "r_joined");
+        if (raportProgramare != null && raportProgramare.getId() != null) {
+            entity.setRaportProgramare(raportProgramare);
+        }
+
         return entity;
     }
 

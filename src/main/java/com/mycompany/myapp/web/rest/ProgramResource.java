@@ -175,17 +175,21 @@ public class ProgramResource {
         LOG.debug("REST request to get a page of Programs");
         if (medicId != null && locatieId != null) {
             LOG.debug("Filtering programs by medicId: {} and locatieId: {}", medicId, locatieId);
-            return programService.findByMedicAndLocatie(medicId, locatieId).collectList().doOnNext(list -> {
-                if (list.isEmpty()) {
-                    LOG.warn("NO PROGRAMS FOUND in database for medicId: {} and locatieId: {}", medicId, locatieId);
-                } else {
-                    LOG.debug("Found {} programs for medicId: {} and locatieId: {}", list.size(), medicId, locatieId);
-                }
-            }).map(list ->
-                ResponseEntity.ok().body(list)
-            );
+            return programService
+                .findByMedicAndLocatie(medicId, locatieId)
+                .collectList()
+                .doOnNext(list -> {
+                    if (list.isEmpty()) {
+                        LOG.warn("NO PROGRAMS FOUND in database for medicId: {} and locatieId: {}", medicId, locatieId);
+                    } else {
+                        LOG.debug("Found {} programs for medicId: {} and locatieId: {}", list.size(), medicId, locatieId);
+                    }
+                })
+                .map(list -> ResponseEntity.ok().body(list));
         }
-        LOG.warn("REST request to get programs WITHOUT both medicId and locatieId filters. Returning all programs (potential performance issue).");
+        LOG.warn(
+            "REST request to get programs WITHOUT both medicId and locatieId filters. Returning all programs (potential performance issue)."
+        );
         return programService
             .countAll()
             .zipWith(programService.findAll(pageable).collectList())

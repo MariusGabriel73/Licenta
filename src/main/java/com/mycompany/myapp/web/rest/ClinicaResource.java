@@ -181,30 +181,55 @@ public class ClinicaResource {
             .zipWith(clinicaService.findAll(pageable).collectList())
             .flatMap(countWithEntities -> {
                 if (locatieId != null) {
-                    return clinicaService.findByLocatieId(locatieId).collectList().map(list ->
-                        ResponseEntity.ok()
-                            .headers(PaginationUtil.generatePaginationHttpHeaders(
-                                org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
-                                new org.springframework.data.domain.PageImpl<>(list, pageable, list.size())
-                            ))
-                            .body(list)
-                    );
+                    return clinicaService
+                        .findByLocatieId(locatieId)
+                        .collectList()
+                        .map(list ->
+                            ResponseEntity.ok()
+                                .headers(
+                                    PaginationUtil.generatePaginationHttpHeaders(
+                                        org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(
+                                            request.getURI(),
+                                            request.getHeaders()
+                                        ),
+                                        new org.springframework.data.domain.PageImpl<>(list, pageable, list.size())
+                                    )
+                                )
+                                .body(list)
+                        );
                 } else if (medicUserLogin != null) {
-                    return clinicaService.findByMedicUserLogin(medicUserLogin).collectList().map(list ->
-                        ResponseEntity.ok()
-                            .headers(PaginationUtil.generatePaginationHttpHeaders(
-                                org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
-                                new org.springframework.data.domain.PageImpl<>(list, pageable, list.size())
-                            ))
-                            .body(list)
-                    );
+                    return clinicaService
+                        .findByMedicUserLogin(medicUserLogin)
+                        .collectList()
+                        .map(list ->
+                            ResponseEntity.ok()
+                                .headers(
+                                    PaginationUtil.generatePaginationHttpHeaders(
+                                        org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(
+                                            request.getURI(),
+                                            request.getHeaders()
+                                        ),
+                                        new org.springframework.data.domain.PageImpl<>(list, pageable, list.size())
+                                    )
+                                )
+                                .body(list)
+                        );
                 }
                 return Mono.just(
                     ResponseEntity.ok()
-                        .headers(PaginationUtil.generatePaginationHttpHeaders(
-                            org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
-                            new org.springframework.data.domain.PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
-                        ))
+                        .headers(
+                            PaginationUtil.generatePaginationHttpHeaders(
+                                org.springframework.web.util.ForwardedHeaderUtils.adaptFromForwardedHeaders(
+                                    request.getURI(),
+                                    request.getHeaders()
+                                ),
+                                new org.springframework.data.domain.PageImpl<>(
+                                    countWithEntities.getT2(),
+                                    pageable,
+                                    countWithEntities.getT1()
+                                )
+                            )
+                        )
                         .body(countWithEntities.getT2())
                 );
             });

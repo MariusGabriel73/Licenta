@@ -55,6 +55,22 @@ export interface Pacient {
   user?: any;
 }
 
+export interface FisaMedicala {
+  id?: ID;
+  diagnostic?: string;
+  tratament?: string;
+  recomandari?: string;
+  dataConsultatie?: string;
+}
+
+export interface RaportProgramare {
+  id?: ID;
+  oraProgramata?: string;
+  oraInceputConsultatie?: string;
+  durataConsultatie?: number;
+  programareId?: ID;
+}
+
 export interface Programare {
   id?: ID;
   dataProgramare: string; // ISO
@@ -64,8 +80,12 @@ export interface Programare {
   pacientId?: ID;
   medic?: Medic;
   medicId?: ID;
+  clinica?: Clinica;
+  clinicaId?: ID;
   locatie?: Locatie;
   locatieId?: ID;
+  fisaMedicala?: FisaMedicala;
+  raportProgramare?: RaportProgramare;
 }
 
 export async function getClinici() {
@@ -138,7 +158,7 @@ export async function getMyAppointments(pacientId: ID) {
 }
 
 export async function createAppointment(
-  p: Required<Pick<Programare, 'pacientId' | 'medicId' | 'locatieId' | 'dataProgramare'>> & Partial<Programare>,
+  p: Required<Pick<Programare, 'pacientId' | 'medicId' | 'clinicaId' | 'dataProgramare'>> & Partial<Programare>,
 ) {
   const payload: Programare = {
     dataProgramare: p.dataProgramare,
@@ -146,7 +166,7 @@ export async function createAppointment(
     observatii: p.observatii ?? '',
     pacientId: p.pacientId,
     medicId: p.medicId,
-    locatieId: p.locatieId,
+    clinicaId: p.clinicaId,
   };
   const { data } = await api.post<Programare>('/api/programares', payload);
   return data;

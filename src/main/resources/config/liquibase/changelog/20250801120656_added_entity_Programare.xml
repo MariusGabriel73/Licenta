@@ -52,9 +52,9 @@
                   file="config/liquibase/fake-data/programare.csv"
                   separator=";"
                   tableName="programare"
-                  usePreparedStatements="true">
+                  usePreparedStatements="false">
             <column name="id" type="numeric"/>
-            <column name="data_programare" type="date"/>
+            <column name="data_programare" type="string"/>
             <column name="status" type="string"/>
             <column name="observatii" type="string"/>
             <column name="pacient_id" type="numeric"/>

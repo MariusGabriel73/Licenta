@@ -1,11 +1,50 @@
 // Components:
 // Define common padding and border radius sizes and more.
 
-$border-radius: 0.15rem;
-$border-radius-lg: 0.125rem;
-$border-radius-sm: 0.1rem;
+$border-radius: 0.75rem;
+$border-radius-lg: 1rem;
+$border-radius-sm: 0.5rem;
+$border-width: 1px;
 
-// Body:
-// Settings for the `<body>` element.
+// Body: Settings for the `<body>` element.
+$body-bg: #f5f7fa;
+$body-color: #1e293b;
 
-$body-bg: #ffffff;
+// Typography
+$font-family-base:
+  'Plus Jakarta Sans',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  Arial,
+  sans-serif;
+$headings-font-family: 'Plus Jakarta Sans', sans-serif;
+$headings-font-weight: 700;
+
+// Colors - Modern 2026 Palette
+$primary: #3b82f6; // Slate Blue (Vibrant)
+$secondary: #64748b; // Classic Slate
+$success: #10b981; // Emerald
+$info: #0ea5e9; // Light Blue
+$warning: #f59e0b; // Amber
+$danger: #f43f5e; // Rose / Coral
+$light: #ffffff;
+$dark: #0f172a;
+
+// Inputs
+$input-bg: rgba(255, 255, 255, 0.85);
+$input-border-color: rgba(226, 232, 240, 0.8);
+$input-border-radius: 0.75rem;
+$input-focus-border-color: #93c5fd;
+$input-focus-box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+$input-padding-y: 0.5rem;
+$input-padding-x: 1rem;
+$input-font-weight: 500;
+
+// Buttons
+$btn-padding-y-lg: 0.75rem;
+$btn-padding-x-lg: 1.5rem;
+$btn-border-radius: 0.75rem;
+$btn-border-radius-lg: 1rem;

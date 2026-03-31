@@ -18,6 +18,7 @@ import {
 } from 'app/shared/api/pacient-api';
 import axios from 'axios';
 import { useAppSelector } from 'app/config/store';
+import ReportFormModal from './ReportFormModal';
 
 function toDayRangeISO(dateStr: string) {
   const start = dayjs(dateStr).startOf('day');
@@ -44,7 +45,15 @@ export default function MedicPage() {
 
   const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
 
+  const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<Programare | null>(null);
+
   const hasFinalizata = useMemo(() => Object.prototype.hasOwnProperty.call(ProgramareStatus, 'FINALIZATA'), []);
+
+  const handleOpenPrescription = (a: Programare) => {
+    setSelectedAppointment(a);
+    setShowPrescriptionModal(true);
+  };
 
   // --- încărcări ---
 
@@ -122,21 +131,31 @@ export default function MedicPage() {
   }, [medicId, locatieId]);
 
   // programări pe zi (medic+locație+dată)
+  const lastFetchParams = React.useRef<string>('');
+
   const loadAppointments = useCallback(async () => {
     if (!selectedDate || !medicId || !locatieId) {
       setAppointments([]);
       return;
     }
+
     const { startIso, endIso } = toDayRangeISO(selectedDate);
+    const paramsKey = `${medicId}-${locatieId}-${startIso}-${endIso}`;
+
+    if (loading || lastFetchParams.current === paramsKey) return;
+
     setLoading(true);
+    lastFetchParams.current = paramsKey;
     try {
       const items = await getAppointmentsForMedicOnDate(medicId, locatieId, startIso, endIso);
       items.sort((a, b) => (a.dataProgramare < b.dataProgramare ? -1 : 1));
       setAppointments(items);
+    } catch (err) {
+      console.error('Error loading appointments:', err);
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, medicId, locatieId]);
+  }, [selectedDate, medicId, locatieId, loading]);
 
   useEffect(() => {
     loadAppointments();
@@ -189,7 +208,9 @@ export default function MedicPage() {
                   setClinicaId(val);
                   // reset dependent
                   setLocatieId(undefined);
-                  setMedicId(undefined);
+                  if (isAdmin) {
+                    setMedicId(undefined);
+                  }
                   setPrograms([]);
                   setAppointments([]);
                 }}
@@ -314,13 +335,15 @@ export default function MedicPage() {
                       <tr key={a.id}>
                         <td>{d.format('HH:mm')}</td>
                         <td>
-                          {a.pacient?.user
-                            ? `${a.pacient.user.lastName} ${a.pacient.user.firstName}`
-                            : a.pacient?.cnp
-                              ? `Pacient (CNP: ${a.pacient.cnp})`
-                              : a.pacientId
-                                ? `Pacient #${a.pacientId}`
-                                : '-'}
+                          {a.pacient?.user?.lastName || a.pacient?.user?.firstName
+                            ? `${a.pacient.user.lastName || ''} ${a.pacient.user.firstName || ''}`.trim()
+                            : a.pacient?.user?.login
+                              ? `Pacient: ${a.pacient.user.login}`
+                              : a.pacient?.cnp
+                                ? `Pacient (CNP: ${a.pacient.cnp})`
+                                : a.pacientId
+                                  ? `Pacient #${a.pacientId}`
+                                  : '-'}
                         </td>
                         <td className="text-truncate" style={{ maxWidth: 280 }} title={a.observatii || ''}>
                           {a.observatii || <span className="text-muted">—</span>}
@@ -350,6 +373,9 @@ export default function MedicPage() {
                                 Anulează
                               </button>
                             )}
+                            <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => handleOpenPrescription(a)}>
+                              {a.fisaMedicala ? 'Editează Rețetă' : 'Scrie Rețetă'}
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -361,6 +387,13 @@ export default function MedicPage() {
           )}
         </div>
       </div>
+
+      <ReportFormModal
+        isOpen={showPrescriptionModal}
+        toggle={() => setShowPrescriptionModal(false)}
+        programare={selectedAppointment}
+        onSuccess={loadAppointments}
+      />
 
       {loading && (
         <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 1080 }}>

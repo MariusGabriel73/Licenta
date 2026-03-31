@@ -33,6 +33,8 @@ interface LocatieRepositoryInternal {
 
     Flux<Locatie> findAllBy(Pageable pageable);
 
+    Flux<Locatie> findByCliniciId(Long clinicaId);
+
     Flux<Locatie> findAll();
 
     Mono<Locatie> findById(Long id);

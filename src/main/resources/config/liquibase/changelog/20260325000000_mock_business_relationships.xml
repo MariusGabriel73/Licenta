@@ -11,116 +11,38 @@
         <update tableName="medic"><column name="sectie_id" valueNumeric="2"/><where>id = 3</where></update>
         <update tableName="medic"><column name="sectie_id" valueNumeric="2"/><where>id = 4</where></update>
         <update tableName="medic"><column name="sectie_id" valueNumeric="3"/><where>id = 5</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="3"/><where>id = 6</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="4"/><where>id = 7</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="4"/><where>id = 8</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="5"/><where>id = 9</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="6"/><where>id = 10</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="7"/><where>id = 11</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="8"/><where>id = 12</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="8"/><where>id = 13</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="9"/><where>id = 14</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="10"/><where>id = 15</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="11"/><where>id = 16</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="12"/><where>id = 17</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="13"/><where>id = 18</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="14"/><where>id = 19</where></update>
-        <update tableName="medic"><column name="sectie_id" valueNumeric="15"/><where>id = 20</where></update>
     </changeSet>
 
     <!-- Phase 2: Link Medics to Clinics (ManyToMany) via rel_medic__clinici -->
-    <!-- Medics 1-2 (Cardiologie) -> Clinics in Bucuresti (1,2,3) -->
-    <!-- Medics 3-4 (Neurologie) -> Clinics in Bucuresti (2,3) and Cluj (8) -->
-    <!-- Medics 5-6 (Pediatrie) -> Clinics in Cluj (8,9) -->
-    <!-- Medics 7-8 (Chirurgie) -> Clinics in Timisoara (11,12) -->
-    <!-- Medics 9 (Dermatologie) -> Clinics in Iasi (13) -->
-    <!-- Medics 10 (Oftalmologie) -> Clinics in Iasi (13,14) -->
-    <!-- Medics 11 (Ortopedie) -> Clinics in Brasov (15,16) -->
-    <!-- Medics 12-13 (Ginecologie) -> Clinics in Constanta (17,18) -->
-    <!-- Medics 14 (Urologie) -> Clinics in Bucuresti (4,5) -->
-    <!-- Medics 15 (Endocrinologie) -> Clinics in Bucuresti (5,6) -->
-    <!-- Medics 16 (Psihiatrie) -> Clinics in Bucuresti (6,7) -->
-    <!-- Medics 17 (Gastroenterologie) -> Clinics in Cluj (9,10) -->
-    <!-- Medics 18 (Pneumologie) -> Clinics in Sibiu (19) -->
-    <!-- Medics 19 (Reumatologie) -> Clinics in Oradea (20) -->
-    <!-- Medics 20 (Oncologie) -> Clinics in Bucuresti (1) -->
     <changeSet id="20260325000000-2" author="jhipster" context="faker">
-        <!-- Medic 1 (Cardiolog Primar) -> Clinica 1 (MedLife Grivita, Buc) -->
+        <!-- Medic 1 -> Clinica 1 -->
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="1"/><column name="clinici_id" valueNumeric="1"/></insert>
-        <!-- Medic 2 (Cardiolog Spec) -> Clinica 2 (Regina Maria Baneasa, Buc) -->
+        <!-- Medic 2 -> Clinica 2, 1 -->
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="2"/><column name="clinici_id" valueNumeric="2"/></insert>
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="2"/><column name="clinici_id" valueNumeric="1"/></insert>
-        <!-- Medic 3 (Neurolog Primar) -> Clinica 3 (Sanador Victoriei, Buc) + 8 (Regina Maria Cluj) -->
+        <!-- Medic 3 -> Clinica 3, 8 -->
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="3"/><column name="clinici_id" valueNumeric="3"/></insert>
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="3"/><column name="clinici_id" valueNumeric="8"/></insert>
-        <!-- Medic 4 (Neurolog Spec) -> Clinica 3 (Sanador, Buc) -->
+        <!-- Medic 4 -> Clinica 3 -->
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="4"/><column name="clinici_id" valueNumeric="3"/></insert>
-        <!-- Medic 5 (Pediatru Rez) -> Clinica 8 (Regina Maria Floresti, Cluj) -->
+        <!-- Medic 5 -> Clinica 8, 9 -->
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="5"/><column name="clinici_id" valueNumeric="8"/></insert>
         <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="5"/><column name="clinici_id" valueNumeric="9"/></insert>
-        <!-- Medic 6 (Pediatru Primar) -> Clinica 9 (Medicover Cluj) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="6"/><column name="clinici_id" valueNumeric="9"/></insert>
-        <!-- Medic 7 (Chirurg Spec) -> Clinica 11 (Sanador Timisoara) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="7"/><column name="clinici_id" valueNumeric="11"/></insert>
-        <!-- Medic 8 (Chirurg Rez) -> Clinica 12 (Regina Maria Timisoara) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="8"/><column name="clinici_id" valueNumeric="12"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="8"/><column name="clinici_id" valueNumeric="11"/></insert>
-        <!-- Medic 9 (Dermatolog) -> Clinica 13 (MedLife Iasi) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="9"/><column name="clinici_id" valueNumeric="13"/></insert>
-        <!-- Medic 10 (Oftalmolog) -> Clinica 13, 14 (Iasi) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="10"/><column name="clinici_id" valueNumeric="13"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="10"/><column name="clinici_id" valueNumeric="14"/></insert>
-        <!-- Medic 11 (Ortoped) -> Clinica 15, 16 (Brasov) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="11"/><column name="clinici_id" valueNumeric="15"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="11"/><column name="clinici_id" valueNumeric="16"/></insert>
-        <!-- Medic 12 (Ginecolog Spec) -> Clinica 17 (Ovidius Constanta) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="12"/><column name="clinici_id" valueNumeric="17"/></insert>
-        <!-- Medic 13 (Ginecolog Rez) -> Clinica 17, 18 (Constanta) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="13"/><column name="clinici_id" valueNumeric="17"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="13"/><column name="clinici_id" valueNumeric="18"/></insert>
-        <!-- Medic 14 (Urolog) -> Clinica 4, 5 (Bucuresti) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="14"/><column name="clinici_id" valueNumeric="4"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="14"/><column name="clinici_id" valueNumeric="5"/></insert>
-        <!-- Medic 15 (Endocrinolog) -> Clinica 5, 6 (Bucuresti) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="15"/><column name="clinici_id" valueNumeric="5"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="15"/><column name="clinici_id" valueNumeric="6"/></insert>
-        <!-- Medic 16 (Psihiatru) -> Clinica 6, 7 (Bucuresti) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="16"/><column name="clinici_id" valueNumeric="6"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="16"/><column name="clinici_id" valueNumeric="7"/></insert>
-        <!-- Medic 17 (Gastroenterolog) -> Clinica 9, 10 (Cluj) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="17"/><column name="clinici_id" valueNumeric="9"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="17"/><column name="clinici_id" valueNumeric="10"/></insert>
-        <!-- Medic 18 (Pneumolog) -> Clinica 19 (Sibiu) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="18"/><column name="clinici_id" valueNumeric="19"/></insert>
-        <!-- Medic 19 (Reumatolog) -> Clinica 20 (Oradea) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="19"/><column name="clinici_id" valueNumeric="20"/></insert>
-        <!-- Medic 20 (Oncolog) -> Clinica 1, 2 (Bucuresti) -->
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="20"/><column name="clinici_id" valueNumeric="1"/></insert>
-        <insert tableName="rel_medic__clinici"><column name="medic_id" valueNumeric="20"/><column name="clinici_id" valueNumeric="2"/></insert>
     </changeSet>
 
-    <!-- Phase 3: Link Programari to Pacienti, Medici, Clinici -->
+    <!-- Phase 3: Link Medics to Specializations (ManyToMany) via rel_medic__specializari -->
     <changeSet id="20260325000000-3" author="jhipster" context="faker">
-        <update tableName="programare"><column name="pacient_id" valueNumeric="1"/><column name="medic_id" valueNumeric="1"/><column name="clinica_id" valueNumeric="1"/><where>id = 1</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="2"/><column name="medic_id" valueNumeric="3"/><column name="clinica_id" valueNumeric="3"/><where>id = 2</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="3"/><column name="medic_id" valueNumeric="9"/><column name="clinica_id" valueNumeric="13"/><where>id = 3</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="4"/><column name="medic_id" valueNumeric="6"/><column name="clinica_id" valueNumeric="9"/><where>id = 4</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="5"/><column name="medic_id" valueNumeric="2"/><column name="clinica_id" valueNumeric="2"/><where>id = 5</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="6"/><column name="medic_id" valueNumeric="9"/><column name="clinica_id" valueNumeric="13"/><where>id = 6</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="7"/><column name="medic_id" valueNumeric="9"/><column name="clinica_id" valueNumeric="13"/><where>id = 7</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="8"/><column name="medic_id" valueNumeric="10"/><column name="clinica_id" valueNumeric="14"/><where>id = 8</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="9"/><column name="medic_id" valueNumeric="11"/><column name="clinica_id" valueNumeric="15"/><where>id = 9</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="10"/><column name="medic_id" valueNumeric="7"/><column name="clinica_id" valueNumeric="11"/><where>id = 10</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="11"/><column name="medic_id" valueNumeric="12"/><column name="clinica_id" valueNumeric="17"/><where>id = 11</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="12"/><column name="medic_id" valueNumeric="13"/><column name="clinica_id" valueNumeric="18"/><where>id = 12</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="13"/><column name="medic_id" valueNumeric="14"/><column name="clinica_id" valueNumeric="4"/><where>id = 13</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="14"/><column name="medic_id" valueNumeric="15"/><column name="clinica_id" valueNumeric="5"/><where>id = 14</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="15"/><column name="medic_id" valueNumeric="16"/><column name="clinica_id" valueNumeric="6"/><where>id = 15</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="16"/><column name="medic_id" valueNumeric="17"/><column name="clinica_id" valueNumeric="9"/><where>id = 16</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="17"/><column name="medic_id" valueNumeric="18"/><column name="clinica_id" valueNumeric="19"/><where>id = 17</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="18"/><column name="medic_id" valueNumeric="19"/><column name="clinica_id" valueNumeric="20"/><where>id = 18</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="19"/><column name="medic_id" valueNumeric="20"/><column name="clinica_id" valueNumeric="1"/><where>id = 19</where></update>
-        <update tableName="programare"><column name="pacient_id" valueNumeric="20"/><column name="medic_id" valueNumeric="1"/><column name="clinica_id" valueNumeric="1"/><where>id = 20</where></update>
+        <!-- Medic 1 -> Cardiologie (1), Medicina Interna (10) -->
+        <insert tableName="rel_medic__specializari"><column name="medic_id" valueNumeric="1"/><column name="specializari_id" valueNumeric="1"/></insert>
+        <insert tableName="rel_medic__specializari"><column name="medic_id" valueNumeric="1"/><column name="specializari_id" valueNumeric="10"/></insert>
+        <!-- Medic 2 -> Neurologie (6) -->
+        <insert tableName="rel_medic__specializari"><column name="medic_id" valueNumeric="2"/><column name="specializari_id" valueNumeric="6"/></insert>
+        <!-- Medic 3 -> Pediatrie (9) -->
+        <insert tableName="rel_medic__specializari"><column name="medic_id" valueNumeric="3"/><column name="specializari_id" valueNumeric="9"/></insert>
+        <!-- Medic 4 -> Dermatologie (2) -->
+        <insert tableName="rel_medic__specializari"><column name="medic_id" valueNumeric="4"/><column name="specializari_id" valueNumeric="2"/></insert>
+        <!-- Medic 5 -> Ortopedie (4) -->
+        <insert tableName="rel_medic__specializari"><column name="medic_id" valueNumeric="5"/><column name="specializari_id" valueNumeric="4"/></insert>
     </changeSet>
 
     <!-- Phase 4: Load Program Data from CSV (Forced Reload) -->

@@ -47,12 +47,12 @@
                   file="config/liquibase/fake-data/raport_programare.csv"
                   separator=";"
                   tableName="raport_programare"
-                  usePreparedStatements="true">
+                  usePreparedStatements="false">
             <column name="id" type="numeric"/>
-            <column name="ora_programata" type="date"/>
-            <column name="ora_inceput_consultatie" type="date"/>
+            <column name="ora_programata" type="string"/>
+            <column name="ora_inceput_consultatie" type="string"/>
             <column name="durata_consultatie" type="numeric"/>
-            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+            <column name="programare_id" type="numeric"/>
         </loadData>
     </changeSet>
 </databaseChangeLog>

@@ -15,6 +15,7 @@ import { AUTHORITIES } from 'app/config/constants';
 import HomePage from 'app/pages/HomePage';
 import PacientPage from 'app/pages/PacientPage';
 import MedicPage from 'app/pages/MedicPage';
+import PacientPrescriptions from 'app/pages/PacientPrescriptions';
 
 const loading = <div>loading ...</div>;
 
@@ -38,6 +39,14 @@ const AppRoutes = () => {
           element={
             <PrivateRoute hasAnyAuthorities={[AUTHORITIES.PACIENT, AUTHORITIES.ADMIN]}>
               <PacientPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/prescriptions"
+          element={
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.PACIENT, AUTHORITIES.ADMIN]}>
+              <PacientPrescriptions />
             </PrivateRoute>
           }
         />

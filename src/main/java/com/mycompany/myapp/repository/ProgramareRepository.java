@@ -16,9 +16,6 @@ import reactor.core.publisher.Mono;
 public interface ProgramareRepository extends ReactiveCrudRepository<Programare, Long>, ProgramareRepositoryInternal {
     Flux<Programare> findAllBy(Pageable pageable);
 
-    @Query("SELECT * FROM programare entity WHERE entity.pacient_id = :id")
-    Flux<Programare> findByPacient(Long id);
-
     @Query("SELECT * FROM programare entity WHERE entity.pacient_id IS NULL")
     Flux<Programare> findAllWherePacientIsNull();
 
@@ -34,10 +31,10 @@ public interface ProgramareRepository extends ReactiveCrudRepository<Programare,
     @Query("SELECT * FROM programare entity WHERE entity.clinica_id IS NULL")
     Flux<Programare> findAllWhereClinicaIsNull();
 
-    @Query("SELECT * FROM programare entity WHERE entity.id not in (select fisa_medicala_id from fisa_medicala)")
+    @Query("SELECT * FROM programare entity WHERE entity.id not in (select programare_id from fisa_medicala)")
     Flux<Programare> findAllWhereFisaMedicalaIsNull();
 
-    @Query("SELECT * FROM programare entity WHERE entity.id not in (select raport_programare_id from raport_programare)")
+    @Query("SELECT * FROM programare entity WHERE entity.id not in (select programare_id from raport_programare)")
     Flux<Programare> findAllWhereRaportProgramareIsNull();
 
     @Override
@@ -68,6 +65,10 @@ interface ProgramareRepositoryInternal {
     );
 
     Mono<Long> countAllByMedicUserLogin(String login, java.time.Instant fromDate, java.time.Instant toDate);
+
+    Flux<Programare> findAllByPacientId(Long pacientId, Pageable pageable);
+
+    Mono<Long> countAllByPacientId(Long pacientId);
 
     Flux<Programare> findAll();
 

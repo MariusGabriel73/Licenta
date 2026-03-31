@@ -64,6 +64,13 @@ public class LocatieServiceImpl implements LocatieService {
         return locatieRepository.findAllBy(pageable).map(locatieMapper::toDto);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<LocatieDTO> findByCliniciId(Long clinicaId) {
+        LOG.debug("Request to get Locaties by clinicaId : {}", clinicaId);
+        return locatieRepository.findByCliniciId(clinicaId).map(locatieMapper::toDto);
+    }
+
     public Mono<Long> countAll() {
         return locatieRepository.count();
     }

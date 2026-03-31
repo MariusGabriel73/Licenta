@@ -84,7 +84,13 @@ public class ProgramareServiceImpl implements ProgramareService {
         java.time.Instant fromDate,
         java.time.Instant toDate
     ) {
-        LOG.debug("Request to get Programares by medicId: {}, locatieId: {}, fromDate: {}, toDate: {}", medicId, locatieId, fromDate, toDate);
+        LOG.debug(
+            "Request to get Programares by medicId: {}, locatieId: {}, fromDate: {}, toDate: {}",
+            medicId,
+            locatieId,
+            fromDate,
+            toDate
+        );
         return programareRepository
             .findByMedicIdAndLocatieIdAndDataProgramareBetween(medicId, locatieId, fromDate, toDate)
             .map(programareMapper::toDto);
@@ -118,6 +124,19 @@ public class ProgramareServiceImpl implements ProgramareService {
     @Transactional(readOnly = true)
     public Mono<Long> countAllByMedicUserLogin(String login, java.time.Instant fromDate, java.time.Instant toDate) {
         return programareRepository.countAllByMedicUserLogin(login, fromDate, toDate);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<ProgramareDTO> findAllByPacientId(Long pacientId, Pageable pageable) {
+        LOG.debug("Request to get all Programares for Pacient : {}", pacientId);
+        return programareRepository.findAllByPacientId(pacientId, pageable).map(programareMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Mono<Long> countAllByPacientId(Long pacientId) {
+        return programareRepository.countAllByPacientId(pacientId);
     }
 
     @Override

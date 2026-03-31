@@ -12,7 +12,7 @@ class SpecializareMapperTest {
 
     @BeforeEach
     void setUp() {
-        specializareMapper = new SpecializareMapperImpl();
+        specializareMapper = org.mapstruct.factory.Mappers.getMapper(SpecializareMapper.class);
     }
 
     @Test

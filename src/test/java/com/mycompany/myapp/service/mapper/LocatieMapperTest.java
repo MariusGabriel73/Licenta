@@ -12,7 +12,7 @@ class LocatieMapperTest {
 
     @BeforeEach
     void setUp() {
-        locatieMapper = new LocatieMapperImpl();
+        locatieMapper = org.mapstruct.factory.Mappers.getMapper(LocatieMapper.class);
     }
 
     @Test

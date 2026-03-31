@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
  * Fișa medicală completată după consultație.
  */
 @Table("fisa_medicala")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class FisaMedicala implements Serializable {
 
@@ -32,6 +33,7 @@ public class FisaMedicala implements Serializable {
     private ZonedDateTime dataConsultatie;
 
     @org.springframework.data.annotation.Transient
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(value = { "fisaMedicala" }, allowSetters = true)
     private Programare programare;
 
     @Column("programare_id")

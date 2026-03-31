@@ -43,7 +43,12 @@ public interface ProgramareService {
 
     Flux<ProgramareDTO> findAllByMedicUserLogin(String login, java.time.Instant fromDate, java.time.Instant toDate, Pageable pageable);
 
-    Flux<ProgramareDTO> findByMedicIdAndLocatieIdAndDataProgramareBetween(Long medicId, Long locatieId, java.time.Instant fromDate, java.time.Instant toDate);
+    Flux<ProgramareDTO> findByMedicIdAndLocatieIdAndDataProgramareBetween(
+        Long medicId,
+        Long locatieId,
+        java.time.Instant fromDate,
+        java.time.Instant toDate
+    );
 
     /**
      * Get all the ProgramareDTO where FisaMedicala is {@code null}.
@@ -66,6 +71,10 @@ public interface ProgramareService {
     Mono<Long> countAll();
 
     Mono<Long> countAllByMedicUserLogin(String login, java.time.Instant fromDate, java.time.Instant toDate);
+
+    Flux<ProgramareDTO> findAllByPacientId(Long pacientId, Pageable pageable);
+
+    Mono<Long> countAllByPacientId(Long pacientId);
 
     /**
      * Get the "id" programare.

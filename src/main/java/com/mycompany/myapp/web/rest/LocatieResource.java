@@ -163,14 +163,19 @@ public class LocatieResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
+     * @param clinicaId optional filter for associated clinic.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of locaties in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<List<LocatieDTO>>> getAllLocaties(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request
+        ServerHttpRequest request,
+        @RequestParam(name = "cliniciId.equals", required = false) Long clinicaId
     ) {
-        LOG.debug("REST request to get a page of Locaties");
+        LOG.debug("REST request to get a page of Locaties, clinicaId={}", clinicaId);
+        if (clinicaId != null) {
+            return locatieService.findByCliniciId(clinicaId).collectList().map(ResponseEntity::ok);
+        }
         return locatieService
             .countAll()
             .zipWith(locatieService.findAll(pageable).collectList())

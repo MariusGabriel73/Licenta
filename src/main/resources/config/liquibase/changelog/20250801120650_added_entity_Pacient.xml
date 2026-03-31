@@ -54,6 +54,7 @@
             <column name="telefon" type="string"/>
             <column name="data_nasterii" type="date"/>
             <column name="adresa" type="string"/>
+            <column name="user_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

@@ -1,21 +1,6 @@
 id;data_programare;status;observatii;pacient_id;medic_id;clinica_id
 1;2026-04-10T09:00:00;ACTIVA;Control cardiologic de rutina;1;1;1
 2;2026-04-11T10:30:00;ACTIVA;Consultatie neurologie - dureri de cap frecvente;2;2;2
-3;2026-04-12T08:00:00;FINALIZATA;Analize si ecografie abdominala;3;3;3
-4;2026-04-14T14:00:00;ACTIVA;Consultatie pediatrica - tuse persistenta;4;4;4
-5;2026-04-15T11:00:00;ANULATA;Programare anulata de catre pacient;5;5;5
-6;2026-04-16T09:30:00;ACTIVA;Consultatie dermatologica - eruptie cutanata;6;6;6
-7;2026-04-17T13:00:00;FINALIZATA;Extirpare nev pigmentar;7;7;7
-8;2026-04-18T10:00:00;ACTIVA;Control oftalmologic anual;8;8;8
-9;2026-04-20T08:30:00;ACTIVA;Consultatie ortopedica - durere genunchi;9;9;9
-10;2026-04-21T15:00:00;ANULATA;Medic indisponibil - reprogramare necesara;10;10;10
-11;2026-04-22T09:00:00;ACTIVA;Consultatie ginecologica de rutina;11;1;11
-12;2026-04-23T11:30:00;ACTIVA;Ecografie obstetricala - trimestrul II;12;2;12
-13;2026-04-24T10:00:00;FINALIZATA;Consultatie urologie - probleme micturition;13;3;13
-14;2026-04-25T14:30:00;ACTIVA;Control endocrinologic - tiroida;14;4;14
-15;2026-04-28T09:00:00;ACTIVA;Consultatie psihiatrie - anxietate cronica;15;5;15
-16;2026-04-29T10:00:00;ACTIVA;Colonoscopie pregatitoare;16;6;16
-17;2026-04-30T08:00:00;FINALIZATA;Spirometrie si consultatie pulmonologica;17;7;17
-18;2026-05-02T11:00:00;ACTIVA;Consultatie reumatologie - poliartralgii;18;8;18
-19;2026-05-05T09:30:00;ACTIVA;Biopsie si consultatie oncologica;19;9;19
-20;2026-05-06T15:00:00;ACTIVA;Consultatie cardiologica post-infarct;20;10;20
+3;2026-04-12T11:00:00;ACTIVA;Consultatie medicina interna;3;3;3
+4;2026-04-14T14:00:00;ACTIVA;Control post-operator;4;4;4
+5;2026-04-16T10:00:00;ACTIVA;Consultatie pediatrie;5;5;5

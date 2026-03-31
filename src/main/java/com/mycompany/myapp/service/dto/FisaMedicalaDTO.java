@@ -22,6 +22,7 @@ public class FisaMedicalaDTO implements Serializable {
 
     private ZonedDateTime dataConsultatie;
 
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(value = { "fisaMedicala" }, allowSetters = true)
     private ProgramareDTO programare;
 
     public Long getId() {
@@ -102,7 +103,6 @@ public class FisaMedicalaDTO implements Serializable {
             ", tratament='" + getTratament() + "'" +
             ", recomandari='" + getRecomandari() + "'" +
             ", dataConsultatie='" + getDataConsultatie() + "'" +
-            ", programare=" + getProgramare() +
             "}";
     }
 }

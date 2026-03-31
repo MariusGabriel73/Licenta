@@ -35,4 +35,5 @@
     <include file="config/liquibase/changelog/20260324000000_added_custom_users_and_roles.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260324000001_mock_user_relations.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260325000000_mock_business_relationships.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260331195500_optimize_joins.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

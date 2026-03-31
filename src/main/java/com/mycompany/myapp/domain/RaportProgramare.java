@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
  * Raport legat de durata și desfășurarea consultației.
  */
 @Table("raport_programare")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class RaportProgramare implements Serializable {
 
@@ -29,6 +30,7 @@ public class RaportProgramare implements Serializable {
     private Integer durataConsultatie;
 
     @org.springframework.data.annotation.Transient
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(value = { "raportProgramare" }, allowSetters = true)
     private Programare programare;
 
     @Column("programare_id")

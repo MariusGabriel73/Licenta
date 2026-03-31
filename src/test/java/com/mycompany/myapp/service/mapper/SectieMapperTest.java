@@ -12,7 +12,7 @@ class SectieMapperTest {
 
     @BeforeEach
     void setUp() {
-        sectieMapper = new SectieMapperImpl();
+        sectieMapper = org.mapstruct.factory.Mappers.getMapper(SectieMapper.class);
     }
 
     @Test

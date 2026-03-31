@@ -12,7 +12,7 @@ class FisaMedicalaMapperTest {
 
     @BeforeEach
     void setUp() {
-        fisaMedicalaMapper = new FisaMedicalaMapperImpl();
+        fisaMedicalaMapper = org.mapstruct.factory.Mappers.getMapper(FisaMedicalaMapper.class);
     }
 
     @Test
