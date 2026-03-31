@@ -145,6 +145,19 @@ export async function getAppointmentsForMedicOnDate(medicId: ID, locatieId: ID, 
   return data;
 }
 
+export async function getAppointmentsForMedicRange(startIso: string, endIso: string, medicId?: ID) {
+  const params: any = {
+    'dataProgramare.greaterThanOrEqual': startIso,
+    'dataProgramare.lessThan': endIso,
+    size: 1000,
+  };
+  if (medicId) {
+    params['medicId.equals'] = medicId;
+  }
+  const { data } = await api.get<Programare[]>('/api/programares', { params });
+  return data;
+}
+
 export async function getCurrentPacientByUserId(userId: ID) {
   const { data } = await api.get<Pacient[]>('/api/pacients', { params: { 'userId.equals': userId, size: 1 } });
   return data?.[0];

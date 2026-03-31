@@ -40,3 +40,12 @@ export const Prescriptions = () => (
     </NavLink>
   </NavItem>
 );
+
+export const MedicAgenda = () => (
+  <NavItem>
+    <NavLink tag={Link} to="/medic" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="calendar-alt" />
+      <span>Agendă</span>
+    </NavLink>
+  </NavItem>
+);

@@ -31,6 +31,7 @@ export const App = () => {
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
   const isPacient = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.PACIENT]));
+  const isMedic = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.MEDIC]));
   const ribbonEnv = useAppSelector(state => state.applicationProfile.ribbonEnv);
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
@@ -45,6 +46,7 @@ export const App = () => {
             isAuthenticated={isAuthenticated}
             isAdmin={isAdmin}
             isPacient={isPacient}
+            isMedic={isMedic}
             currentLocale={currentLocale}
             ribbonEnv={ribbonEnv}
             isInProduction={isInProduction}

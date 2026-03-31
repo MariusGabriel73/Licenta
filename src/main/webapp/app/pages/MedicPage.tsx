@@ -10,10 +10,11 @@ import {
   getLocatiiByClinica,
   getPrograms,
   getAppointmentsForMedicOnDate,
+  getAppointmentsForMedicRange,
   cancelAppointment,
   updateAppointment,
-  getMedici, // <-- avem nevoie de lista de medici
-  type Medic, // <-- tipul Medic pentru dropdown
+  getMedici,
+  type Medic,
   type ID,
 } from 'app/shared/api/pacient-api';
 import axios from 'axios';
@@ -41,9 +42,11 @@ export default function MedicPage() {
 
   const [clinicaId, setClinicaId] = useState<ID | undefined>(undefined);
   const [locatieId, setLocatieId] = useState<ID | undefined>(undefined);
-  const [medicId, setMedicId] = useState<ID | undefined>(undefined); // <-- selectat de admin
+  const [medicId, setMedicId] = useState<ID | undefined>(undefined);
 
   const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
+  const [currentMonth, setCurrentMonth] = useState<dayjs.Dayjs>(dayjs().startOf('month'));
+  const [monthlyAppointments, setMonthlyAppointments] = useState<Programare[]>([]);
 
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Programare | null>(null);
@@ -161,6 +164,24 @@ export default function MedicPage() {
     loadAppointments();
   }, [loadAppointments]);
 
+  // programări pe lună pentru calendar
+  useEffect(() => {
+    (async () => {
+      if (!medicId) {
+        setMonthlyAppointments([]);
+        return;
+      }
+      const start = currentMonth.startOf('month').toISOString();
+      const end = currentMonth.endOf('month').toISOString();
+      try {
+        const data = await getAppointmentsForMedicRange(start, end, isAdmin ? medicId : undefined);
+        setMonthlyAppointments(data);
+      } catch (err) {
+        console.error('Error fetching monthly appts:', err);
+      }
+    })();
+  }, [medicId, currentMonth, isAdmin]);
+
   // --- acțiuni ---
 
   async function markFinalizata(a: Programare) {
@@ -191,9 +212,112 @@ export default function MedicPage() {
 
   return (
     <div className="container py-4 fade-in-up">
-      <h2 className="mb-4">Agenda medicului</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="mb-0 fw-bold text-dark">Agenda medicului</h2>
+        <div className="text-secondary small">
+          Conectat ca: <span className="fw-bold text-primary">{account?.login}</span>
+        </div>
+      </div>
 
       {!isAuthenticated && <div className="alert alert-warning">Trebuie să fii autentificat pentru a accesa această pagină.</div>}
+
+      {/* SECȚIUNE CALENDAR - vizibilă DOAR pentru MEDICI, nu pentru ADMIN */}
+      {!isAdmin && (
+        <div className="card glass-panel border-0 mb-4 overflow-hidden">
+          <div className="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+            <h4 className="mb-0 fw-bold">{currentMonth.format('MMMM YYYY')}</h4>
+            <div className="btn-group shadow-sm rounded-pill bg-white p-1">
+              <button
+                className="btn btn-sm btn-light rounded-pill border-0"
+                onClick={() => setCurrentMonth(prev => prev.subtract(1, 'month'))}
+              >
+                ❮
+              </button>
+              <button
+                className="btn btn-sm btn-white text-primary fw-bold border-0 px-3"
+                onClick={() => setCurrentMonth(dayjs().startOf('month'))}
+              >
+                Azi
+              </button>
+              <button className="btn btn-sm btn-light rounded-pill border-0" onClick={() => setCurrentMonth(prev => prev.add(1, 'month'))}>
+                ❯
+              </button>
+            </div>
+          </div>
+          <div className="card-body p-0">
+            <div className="calendar-grid">
+              {['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'].map(d => (
+                <div
+                  key={d}
+                  className="calendar-day-header py-3 text-center text-muted small fw-bold text-uppercase border-bottom border-light"
+                >
+                  {d}
+                </div>
+              ))}
+              {(() => {
+                const days = [];
+                const startOfMonth = currentMonth.startOf('month');
+                const endOfMonth = currentMonth.endOf('month');
+                const startDay = (startOfMonth.day() + 6) % 7; // Ajustăm pt Luni start
+
+                // Zile goale înainte
+                for (let i = 0; i < startDay; i++) {
+                  days.push(
+                    <div key={`prev-${i}`} className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light" />,
+                  );
+                }
+
+                // Zilele lunii
+                for (let d = 1; d <= endOfMonth.date(); d++) {
+                  const date = startOfMonth.date(d);
+                  const dateStr = date.format('YYYY-MM-DD');
+                  const isSelected = selectedDate === dateStr;
+                  const isToday = dayjs().format('YYYY-MM-DD') === dateStr;
+
+                  const dayAppts = monthlyAppointments.filter(a => dayjs(a.dataProgramare).format('YYYY-MM-DD') === dateStr);
+
+                  days.push(
+                    <div
+                      key={dateStr}
+                      className={`calendar-cell border-end border-bottom border-light p-2 position-relative cursor-pointer transition-all ${isSelected ? 'bg-primary bg-opacity-10 shadow-inset' : 'hover-bg-light'}`}
+                      onClick={() => setSelectedDate(dateStr)}
+                      style={{ minHeight: '100px', cursor: 'pointer' }}
+                    >
+                      <div className="d-flex justify-content-between align-items-start mb-1">
+                        <span className={`small fw-bold px-2 py-1 rounded-pill ${isToday ? 'bg-primary text-white' : 'text-secondary'}`}>
+                          {d}
+                        </span>
+                        {dayAppts.length > 0 && (
+                          <span className="badge rounded-pill bg-soft-primary small" style={{ fontSize: '0.65rem' }}>
+                            {dayAppts.length}
+                          </span>
+                        )}
+                      </div>
+                      <div className="calendar-events-container overflow-hidden">
+                        {dayAppts.slice(0, 2).map((a, idx) => (
+                          <div
+                            key={a.id || idx}
+                            className="calendar-event-pill bg-soft-success mb-1 truncate small px-2 rounded-pill"
+                            style={{ fontSize: '0.7rem', padding: '2px 0' }}
+                          >
+                            {dayjs(a.dataProgramare).format('HH:mm')} {a.pacient?.user?.lastName || 'Pacient'}
+                          </div>
+                        ))}
+                        {dayAppts.length > 2 && (
+                          <div className="text-muted small ps-2" style={{ fontSize: '0.6rem' }}>
+                            + încă {dayAppts.length - 2}
+                          </div>
+                        )}
+                      </div>
+                    </div>,
+                  );
+                }
+                return days;
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card mb-4 glass-panel hover-lift border-0">
         <div className="card-body">
@@ -397,13 +521,36 @@ export default function MedicPage() {
 
       {loading && (
         <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 1080 }}>
-          <div className="toast show align-items-center text-bg-dark border-0">
-            <div className="d-flex">
-              <div className="toast-body">Se încarcă...</div>
-            </div>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
         </div>
       )}
+
+      {/* Styles pentru Calendar */}
+      <style>{`
+        .calendar-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          background: rgba(255, 255, 255, 0.4);
+        }
+        .calendar-cell {
+          transition: all 0.2s ease;
+        }
+        .hover-bg-light:hover {
+          background-color: rgba(255, 255, 255, 0.8) !important;
+        }
+        .calendar-event-pill {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          border-left: 3px solid var(--bs-success);
+        }
+        .shadow-inset {
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+      `}</style>
     </div>
   );
 }
