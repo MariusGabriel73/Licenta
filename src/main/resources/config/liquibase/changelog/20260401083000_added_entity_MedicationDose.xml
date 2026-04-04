@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20260401083000-1" author="antigravity">
+        <createTable tableName="medication_dose">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fisa_medicala_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="medicament" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ora_planificata" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ora_confirmata" type="${datetimeType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260401083000-2" author="antigravity">
+        <addForeignKeyConstraint baseColumnNames="fisa_medicala_id"
+                                 baseTableName="medication_dose"
+                                 constraintName="fk_medication_dose_fisa_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="fisa_medicala"/>
+    </changeSet>
+</databaseChangeLog>

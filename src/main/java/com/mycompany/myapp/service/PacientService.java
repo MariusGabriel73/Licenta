@@ -68,4 +68,9 @@ public interface PacientService {
      * Find the Pacient for a given user login.
      */
     Mono<PacientDTO> findByUserLogin(String login);
+
+    /**
+     * Find the Pacient for a given user ID.
+     */
+    Mono<PacientDTO> findByUserId(Long userId);
 }

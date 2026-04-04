@@ -25,21 +25,34 @@ public class FisaMedicalaServiceImpl implements FisaMedicalaService {
 
     private final FisaMedicalaMapper fisaMedicalaMapper;
 
-    public FisaMedicalaServiceImpl(FisaMedicalaRepository fisaMedicalaRepository, FisaMedicalaMapper fisaMedicalaMapper) {
+    private final com.mycompany.myapp.service.MedicationDoseService medicationDoseService;
+
+    public FisaMedicalaServiceImpl(
+        FisaMedicalaRepository fisaMedicalaRepository,
+        FisaMedicalaMapper fisaMedicalaMapper,
+        com.mycompany.myapp.service.MedicationDoseService medicationDoseService
+    ) {
         this.fisaMedicalaRepository = fisaMedicalaRepository;
         this.fisaMedicalaMapper = fisaMedicalaMapper;
+        this.medicationDoseService = medicationDoseService;
     }
 
     @Override
     public Mono<FisaMedicalaDTO> save(FisaMedicalaDTO fisaMedicalaDTO) {
         LOG.debug("Request to save FisaMedicala : {}", fisaMedicalaDTO);
-        return fisaMedicalaRepository.save(fisaMedicalaMapper.toEntity(fisaMedicalaDTO)).map(fisaMedicalaMapper::toDto);
+        return fisaMedicalaRepository
+            .save(fisaMedicalaMapper.toEntity(fisaMedicalaDTO))
+            .flatMap(saved -> medicationDoseService.generateDosesForFisa(saved.getId(), saved.getTratament()).then(Mono.just(saved)))
+            .map(fisaMedicalaMapper::toDto);
     }
 
     @Override
     public Mono<FisaMedicalaDTO> update(FisaMedicalaDTO fisaMedicalaDTO) {
         LOG.debug("Request to update FisaMedicala : {}", fisaMedicalaDTO);
-        return fisaMedicalaRepository.save(fisaMedicalaMapper.toEntity(fisaMedicalaDTO)).map(fisaMedicalaMapper::toDto);
+        return fisaMedicalaRepository
+            .save(fisaMedicalaMapper.toEntity(fisaMedicalaDTO))
+            .flatMap(saved -> medicationDoseService.generateDosesForFisa(saved.getId(), saved.getTratament()).then(Mono.just(saved)))
+            .map(fisaMedicalaMapper::toDto);
     }
 
     @Override
@@ -54,6 +67,7 @@ public class FisaMedicalaServiceImpl implements FisaMedicalaService {
                 return existingFisaMedicala;
             })
             .flatMap(fisaMedicalaRepository::save)
+            .flatMap(saved -> medicationDoseService.generateDosesForFisa(saved.getId(), saved.getTratament()).then(Mono.just(saved)))
             .map(fisaMedicalaMapper::toDto);
     }
 

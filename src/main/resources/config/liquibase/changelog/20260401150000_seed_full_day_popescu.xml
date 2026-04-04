@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260401150000-1-fix" author="antigravity">
+        <loadData
+                  file="config/liquibase/fake-data/popescu_full_day.csv"
+                  separator=";"
+                  tableName="programare"
+                  usePreparedStatements="false">
+            <column name="id" type="numeric"/>
+            <column name="data_programare" type="string"/>
+            <column name="status" type="string"/>
+            <column name="medic_id" type="numeric"/>
+            <column name="pacient_id" type="numeric"/>
+            <column name="clinica_id" type="numeric"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

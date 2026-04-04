@@ -230,6 +230,26 @@ class ProgramareRepositoryInternalImpl extends SimpleR2dbcRepository<Programare,
             .one();
     }
 
+    @Override
+    public Flux<Programare> findAllByPacientUserLogin(String login, Pageable pageable) {
+        Condition whereClause = Conditions.isEqual(userPacientTable.column("login"), Conditions.just("'" + login + "'"));
+        return createQuery(pageable, whereClause).all();
+    }
+
+    @Override
+    public Mono<Long> countAllByPacientUserLogin(String login) {
+        return db
+            .sql(
+                "SELECT COUNT(DISTINCT e.id) FROM programare e " +
+                "LEFT OUTER JOIN pacient p ON e.pacient_id = p.id " +
+                "LEFT OUTER JOIN jhi_user u_p ON p.user_id = u_p.id " +
+                "WHERE u_p.login = :login"
+            )
+            .bind("login", login)
+            .map((row, metadata) -> row.get(0, Long.class))
+            .one();
+    }
+
     private Programare process(Row row, RowMetadata metadata) {
         Programare entity = programareMapper.apply(row, "e");
 

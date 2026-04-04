@@ -19,10 +19,13 @@ import {
   createAppointment,
   updateAppointment,
   cancelAppointment,
+  addToWaitlist,
   type ID,
 } from 'app/shared/api/pacient-api';
 import { useAppSelector } from 'app/config/store';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileMedical, faStethoscope, faPills, faLightbulb, faPrint, faUserMd, faHospital } from '@fortawesome/free-solid-svg-icons';
 
 const SLOT_MINUTES = 30;
 
@@ -71,8 +74,10 @@ function buildSlots(programs: Program[], selectedDate: string, taken: Programare
       return { start, end };
     });
 
-  // sloturi deja ocupate (comparație la nivel de minut)
-  const takenSet = new Set(taken.map(a => dayjs(a.dataProgramare).second(0).millisecond(0).toISOString()));
+  // sloturi deja ocupate (comparație la nivel de minut) - excludem cele anulate
+  const takenSet = new Set(
+    taken.filter(a => a.status !== ProgramareStatus.ANULATA).map(a => dayjs(a.dataProgramare).second(0).millisecond(0).toISOString()),
+  );
 
   const now = dayjs();
   const slots: { iso: string; label: string; disabled: boolean }[] = [];
@@ -127,6 +132,7 @@ interface BookingFormProps {
   setObservatii: (o: string) => void;
   setRescheduleId: (id: ID | null) => void;
   handleCreateOrUpdate: () => void;
+  handleJoinWaitlist: () => void;
 }
 
 const BookingForm: React.FC<BookingFormProps> = props => {
@@ -156,6 +162,7 @@ const BookingForm: React.FC<BookingFormProps> = props => {
     setObservatii,
     setRescheduleId,
     handleCreateOrUpdate,
+    handleJoinWaitlist,
   } = props;
 
   return (
@@ -340,6 +347,16 @@ const BookingForm: React.FC<BookingFormProps> = props => {
               Renunță la reprogramare
             </button>
           )}
+          {!rescheduleId && medicId && selectedDate && slots.every(s => s.disabled) && (
+            <button
+              className="btn btn-outline-info rounded-pill ms-3 px-4 fw-bold shadow-sm"
+              onClick={handleJoinWaitlist}
+              disabled={loading}
+            >
+              <FontAwesomeIcon icon="clock" className="me-2" />
+              Pune-mă pe lista de așteptare
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -389,7 +406,7 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
             </thead>
             <tbody>
               {appointments.map(a => {
-                const d = dayjs(a.dataProgramare);
+                const d = dayjs(new Date(a.dataProgramare));
                 const past = d.isBefore(dayjs());
                 return (
                   <tr key={a.id}>
@@ -478,54 +495,91 @@ interface PrescriptionModalProps {
 
 const PrescriptionModal: React.FC<PrescriptionModalProps> = ({ isOpen, toggle, appointment }) => {
   return (
-    <Modal isOpen={isOpen} toggle={toggle} size="lg" centered className="glass-modal">
+    <Modal isOpen={isOpen} toggle={toggle} size="lg" centered className="glass-modal custom-prescription-modal">
       <ModalHeader toggle={toggle} className="border-0 pb-0">
         <div className="d-flex align-items-center">
+          <div className="bg-soft-primary p-3 rounded-4 me-3 text-primary shadow-sm">
+            <FontAwesomeIcon icon={faFileMedical} size="lg" />
+          </div>
           <div>
-            <h4 className="m-0 text-primary fw-bold">Fișă Medicală / Rețetă</h4>
-            <small className="text-muted">Emisă la data de {dayjs(appointment?.dataProgramare).format('DD.MM.YYYY')}</small>
+            <h4 className="m-0 text-dark fw-bold">Fișă Medicală / Rețetă</h4>
+            <div className="d-flex align-items-center mt-1">
+              <span className="badge bg-light text-secondary border rounded-pill small-text px-2">
+                Emisă la data de {dayjs(new Date(appointment?.dataProgramare ?? '')).format('DD.MM.YYYY')}
+              </span>
+            </div>
           </div>
         </div>
       </ModalHeader>
       <ModalBody className="py-4 px-4">
         <div className="row g-4">
           <div className="col-md-6">
-            <div className="p-3 bg-soft-primary rounded-4 border-0 h-100">
-              <label className="small text-uppercase text-muted fw-bold mb-1 d-block">Medic Curant</label>
-              <div className="h6 mb-0 fw-bold text-dark">
+            <div className="p-4 bg-white rounded-4 border border-light-subtle shadow-xs h-100 transition-hover">
+              <div className="d-flex align-items-center mb-2">
+                <FontAwesomeIcon icon={faUserMd} className="text-primary opacity-50 me-2" />
+                <label className="small text-uppercase text-muted fw-bold mb-0">Medic Curant</label>
+              </div>
+              <div className="h5 mb-0 fw-bold text-dark">
                 {appointment?.medic?.user ? `Dr. ${appointment.medic.user.lastName} ${appointment.medic.user.firstName}` : '-'}
               </div>
-              <small className="text-secondary">{appointment?.medic?.gradProfesional}</small>
+              <div className="text-primary small fw-semibold mt-1">{appointment?.medic?.gradProfesional}</div>
             </div>
           </div>
           <div className="col-md-6">
-            <div className="p-3 bg-soft-primary rounded-4 border-0 h-100">
-              <label className="small text-uppercase text-muted fw-bold mb-1 d-block">Locație</label>
-              <div className="h6 mb-0 fw-bold text-dark">{appointment?.clinica?.nume}</div>
-              <small className="text-secondary">
+            <div className="p-4 bg-white rounded-4 border border-light-subtle shadow-xs h-100 transition-hover">
+              <div className="d-flex align-items-center mb-2">
+                <FontAwesomeIcon icon={faHospital} className="text-primary opacity-50 me-2" />
+                <label className="small text-uppercase text-muted fw-bold mb-0">Locație</label>
+              </div>
+              <div className="h5 mb-0 fw-bold text-dark">{appointment?.clinica?.nume}</div>
+              <div className="text-muted small mt-1">
                 {appointment?.clinica?.locatie?.adresa}, {appointment?.clinica?.locatie?.oras}
-              </small>
+              </div>
             </div>
           </div>
 
           <div className="col-12 mt-4">
             <div className="mb-4">
-              <h6 className="fw-bold text-dark d-flex align-items-center">Diagnostic</h6>
-              <div className="p-3 bg-white rounded-4 border border-light-subtle shadow-sm min-h-50">
+              <h6 className="fw-bold text-dark d-flex align-items-center mb-3">
+                <div
+                  className="bg-soft-primary p-2 rounded-3 me-2 text-primary d-flex align-items-center justify-content-center"
+                  style={{ width: '32px', height: '32px' }}
+                >
+                  <FontAwesomeIcon icon={faStethoscope} />
+                </div>
+                Diagnostic
+              </h6>
+              <div className="p-4 bg-white rounded-4 border border-light-subtle shadow-xs min-h-50 border-start border-4 border-start-primary">
                 {appointment?.fisaMedicala?.diagnostic || 'Nespecificat'}
               </div>
             </div>
 
             <div className="mb-4">
-              <h6 className="fw-bold text-dark d-flex align-items-center">Tratament și Rețetă</h6>
-              <div className="p-3 bg-soft-success rounded-4 text-dark min-h-100 whitespace-pre-wrap shadow-sm">
+              <h6 className="fw-bold text-dark d-flex align-items-center mb-3">
+                <div
+                  className="bg-soft-success p-2 rounded-3 me-2 text-success d-flex align-items-center justify-content-center"
+                  style={{ width: '32px', height: '32px' }}
+                >
+                  <FontAwesomeIcon icon={faPills} />
+                </div>
+                Tratament și Rețetă
+              </h6>
+              <div className="p-4 bg-light bg-opacity-50 rounded-4 border border-light-subtle text-dark min-h-100 whitespace-pre-wrap border-start border-4 border-start-success shadow-xs">
                 {appointment?.fisaMedicala?.tratament || 'Nespecificat'}
               </div>
             </div>
 
             <div className="mb-0">
-              <h6 className="fw-bold text-dark d-flex align-items-center">Recomandări</h6>
-              <div className="p-3 bg-soft-warning rounded-4 text-dark min-h-50 shadow-sm">
+              <h6 className="fw-bold text-dark d-flex align-items-center mb-3">
+                <div
+                  className="bg-soft-warning p-2 rounded-3 me-2 text-warning d-flex align-items-center justify-content-center"
+                  style={{ width: '32px', height: '32px' }}
+                >
+                  <FontAwesomeIcon icon={faLightbulb} />
+                </div>
+                Recomandări
+              </h6>
+              <div className="p-4 bg-light bg-opacity-50 rounded-4 border border-light-subtle text-dark min-h-50 border-start border-4 border-start-warning shadow-xs">
                 {appointment?.fisaMedicala?.recomandari || 'Nicio recomandare suplimentară.'}
               </div>
             </div>
@@ -533,10 +587,11 @@ const PrescriptionModal: React.FC<PrescriptionModalProps> = ({ isOpen, toggle, a
         </div>
       </ModalBody>
       <ModalFooter className="border-0 bg-light bg-opacity-50 py-3">
-        <Button color="secondary" outline className="rounded-pill px-4 border-0" onClick={toggle}>
+        <Button color="secondary" outline pill onClick={toggle} className="rounded-pill px-4 border-0">
           Închide
         </Button>
-        <Button color="primary" className="rounded-pill px-4 shadow-sm" onClick={() => window.print()}>
+        <Button color="primary" pill onClick={() => window.print()} className="rounded-pill px-4 shadow-sm fw-bold">
+          <FontAwesomeIcon icon={faPrint} className="me-2" />
           Printează Rețeta
         </Button>
       </ModalFooter>
@@ -671,6 +726,29 @@ export default function PacientPage() {
 
   const slots = useMemo(() => buildSlots(programs, selectedDate, takenForDate), [programs, selectedDate, takenForDate]);
 
+  async function handleJoinWaitlist() {
+    if (!pacientId || !medicId || !clinicaId || !clinicLocatieId || !selectedDate) {
+      alert('Lipsesc date necesare pentru lista de așteptare!');
+      return;
+    }
+    setLoading(true);
+    try {
+      await addToWaitlist({
+        pacientId,
+        medicId,
+        clinicaId,
+        locatieId: clinicLocatieId,
+        dataPreferata: dayjs(selectedDate).toISOString(),
+        status: 'WAITING',
+      });
+      alert('Ai fost adaugat cu succes pe lista de așteptare! Te vom notifica dacă se eliberează un loc.');
+    } catch (err: any) {
+      alert(`Eroare: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleCreateOrUpdate() {
     if (!pacientId || !medicId || !clinicaId || !clinicLocatieId || !selectedSlotIso) {
       alert(`Lipsesc date necesare!`);
@@ -777,6 +855,7 @@ export default function PacientPage() {
         setObservatii={setObservatii}
         setRescheduleId={setRescheduleId}
         handleCreateOrUpdate={handleCreateOrUpdate}
+        handleJoinWaitlist={handleJoinWaitlist}
       />
 
       <h3 className="mb-3">Programările mele</h3>

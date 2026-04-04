@@ -14,6 +14,7 @@ import {
   cancelAppointment,
   updateAppointment,
   getMedici,
+  getMyMedicationDoses,
   type Medic,
   type ID,
 } from 'app/shared/api/pacient-api';
@@ -159,6 +160,29 @@ export default function MedicPage() {
       setLoading(false);
     }
   }, [selectedDate, medicId, locatieId, loading]);
+
+  const [complianceData, setComplianceData] = useState<{ [key: number]: number }>({});
+
+  const loadCompliance = useCallback(async (pacientId: number) => {
+    try {
+      const doses = await getMyMedicationDoses(pacientId);
+      if (doses.length > 0) {
+        const taken = doses.filter((d: any) => d.status === 'TAKEN').length;
+        const score = Math.round((taken / doses.length) * 100);
+        setComplianceData(prev => ({ ...prev, [pacientId]: score }));
+      }
+    } catch (err) {
+      console.error('Error loading compliance', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    appointments.forEach(a => {
+      if (a.pacientId && complianceData[a.pacientId] === undefined) {
+        loadCompliance(a.pacientId);
+      }
+    });
+  }, [appointments, loadCompliance, complianceData]);
 
   useEffect(() => {
     loadAppointments();
@@ -453,6 +477,7 @@ export default function MedicPage() {
                   <tr>
                     <th>Ora</th>
                     <th>Pacient</th>
+                    <th>Complianță</th>
                     <th>Observații</th>
                     <th>Status</th>
                     <th style={{ width: 260 }}>Acțiuni</th>
@@ -475,7 +500,22 @@ export default function MedicPage() {
                                   ? `Pacient #${a.pacientId}`
                                   : '-'}
                         </td>
-                        <td className="text-truncate" style={{ maxWidth: 280 }} title={a.observatii || ''}>
+                        <td>
+                          {a.pacientId && complianceData[a.pacientId] !== undefined ? (
+                            <div className="d-flex align-items-center gap-2">
+                              <div className="progress rounded-pill flex-grow-1" style={{ height: '6px', minWidth: '60px' }}>
+                                <div
+                                  className={`progress-bar ${complianceData[a.pacientId] > 80 ? 'bg-success' : complianceData[a.pacientId] > 50 ? 'bg-warning' : 'bg-danger'}`}
+                                  style={{ width: `${complianceData[a.pacientId]}%` }}
+                                />
+                              </div>
+                              <small className="fw-bold text-dark">{complianceData[a.pacientId]}%</small>
+                            </div>
+                          ) : (
+                            <span className="text-muted small">N/A</span>
+                          )}
+                        </td>
+                        <td className="text-truncate" style={{ maxWidth: 200 }} title={a.observatii || ''}>
                           {a.observatii || <span className="text-muted">—</span>}
                         </td>
                         <td>

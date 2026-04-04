@@ -36,4 +36,8 @@
     <include file="config/liquibase/changelog/20260324000001_mock_user_relations.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260325000000_mock_business_relationships.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260331195500_optimize_joins.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260401080000_added_entity_Waitlist.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260401083000_added_entity_MedicationDose.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260401150000_seed_full_day_popescu.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260401160000_add_notified_slot_time_to_waitlist.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

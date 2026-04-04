@@ -88,6 +88,26 @@ export interface Programare {
   raportProgramare?: RaportProgramare;
 }
 
+export interface Waitlist {
+  id?: ID;
+  pacientId: ID;
+  medicId: ID;
+  clinicaId: ID;
+  locatieId: ID;
+  dataPreferata: string;
+  createdAt?: string;
+  status?: 'WAITING' | 'NOTIFIED' | 'COMPLETED' | 'CANCELLED';
+}
+
+export interface MedicationDose {
+  id: ID;
+  fisaMedicalaId: ID;
+  medicament: string;
+  oraPlanificata: string;
+  oraConfirmata?: string;
+  status: 'PENDING' | 'TAKEN' | 'MISSED';
+}
+
 export async function getClinici() {
   const { data } = await api.get<Clinica[]>('/api/clinicas', { params: { size: 1000 } });
   return data;
@@ -158,9 +178,9 @@ export async function getAppointmentsForMedicRange(startIso: string, endIso: str
   return data;
 }
 
-export async function getCurrentPacientByUserId(userId: ID) {
-  const { data } = await api.get<Pacient[]>('/api/pacients', { params: { 'userId.equals': userId, size: 1 } });
-  return data?.[0];
+export async function getCurrentPacientByUserId(_userId: ID) {
+  const { data } = await api.get<Pacient>('/api/pacients/me');
+  return data;
 }
 
 export async function getMyAppointments(pacientId: ID) {
@@ -196,4 +216,31 @@ export async function updateAppointment(id: ID, patch: Partial<Programare>) {
 export async function cancelAppointment(id: ID) {
   // ajustează numele exact al valorii din enum dacă diferă
   return updateAppointment(id, { id, status: ProgramareStatus.ANULATA as any });
+}
+
+// --- WAITLIST ---
+export async function addToWaitlist(w: Waitlist) {
+  const { data } = await api.post<Waitlist>('/api/waitlist', w);
+  return data;
+}
+
+export async function getMyWaitlist(pacientId: ID) {
+  const { data } = await api.get<Waitlist[]>(`/api/waitlist/pacient/${pacientId}`);
+  return data;
+}
+
+export async function claimWaitlistSpot(waitlistId: ID) {
+  const { data } = await api.post<Programare>(`/api/waitlist/${waitlistId}/claim`);
+  return data;
+}
+
+// --- MEDICATION COMPLIANCE ---
+export async function getMyMedicationDoses(pacientId: ID) {
+  const { data } = await api.get<MedicationDose[]>(`/api/medication-doses/pacient/${pacientId}`);
+  return data;
+}
+
+export async function confirmMedicationDose(doseId: ID) {
+  const { data } = await api.patch<MedicationDose>(`/api/medication-doses/${doseId}/confirm`);
+  return data;
 }

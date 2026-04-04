@@ -76,6 +76,10 @@ public interface ProgramareService {
 
     Mono<Long> countAllByPacientId(Long pacientId);
 
+    Flux<ProgramareDTO> findAllByPacientUserLogin(String login, Pageable pageable);
+
+    Mono<Long> countAllByPacientUserLogin(String login);
+
     /**
      * Get the "id" programare.
      *

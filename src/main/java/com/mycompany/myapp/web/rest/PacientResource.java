@@ -167,12 +167,24 @@ public class PacientResource {
      * @param request a {@link ServerHttpRequest} request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of pacients in body.
      */
+    /**
+     * {@code GET  /pacients} : get all the pacients.
+     *
+     * @param pageable the pagination information.
+     * @param request a {@link ServerHttpRequest} request.
+     * @param userId the userId to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of pacients in body.
+     */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<List<PacientDTO>>> getAllPacients(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request
+        ServerHttpRequest request,
+        @RequestParam(name = "userId.equals", required = false) Long userId
     ) {
-        LOG.debug("REST request to get a page of Pacients");
+        LOG.debug("REST request to get a page of Pacients with userId: {}", userId);
+        if (userId != null) {
+            return pacientService.findByUserId(userId).map(List::of).map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.ok(List.of()));
+        }
         return pacientService
             .countAll()
             .zipWith(pacientService.findAll(pageable).collectList())

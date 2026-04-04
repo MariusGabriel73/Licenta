@@ -25,9 +25,16 @@ public class ProgramareServiceImpl implements ProgramareService {
 
     private final ProgramareMapper programareMapper;
 
-    public ProgramareServiceImpl(ProgramareRepository programareRepository, ProgramareMapper programareMapper) {
+    private final com.mycompany.myapp.service.WaitlistService waitlistService;
+
+    public ProgramareServiceImpl(
+        ProgramareRepository programareRepository,
+        ProgramareMapper programareMapper,
+        com.mycompany.myapp.service.WaitlistService waitlistService
+    ) {
         this.programareRepository = programareRepository;
         this.programareMapper = programareMapper;
+        this.waitlistService = waitlistService;
     }
 
     @Override
@@ -39,7 +46,23 @@ public class ProgramareServiceImpl implements ProgramareService {
     @Override
     public Mono<ProgramareDTO> update(ProgramareDTO programareDTO) {
         LOG.debug("Request to update Programare : {}", programareDTO);
-        return programareRepository.save(programareMapper.toEntity(programareDTO)).map(programareMapper::toDto);
+        return programareRepository
+            .save(programareMapper.toEntity(programareDTO))
+            .flatMap(saved -> {
+                if (com.mycompany.myapp.domain.enumeration.ProgramareStatus.ANULATA.equals(saved.getStatus())) {
+                    LOG.info(
+                        "WaitlistTrigger: TRIGGERED for Appointment {} (Status: ANULATA). Medic ID: {}, Date: {}",
+                        saved.getId(),
+                        saved.getMedicId(),
+                        saved.getDataProgramare()
+                    );
+                    return waitlistService
+                        .checkWaitlistOnCancellation(saved.getMedicId(), saved.getDataProgramare())
+                        .then(Mono.just(saved));
+                }
+                return Mono.just(saved);
+            })
+            .map(programareMapper::toDto);
     }
 
     @Override
@@ -54,6 +77,20 @@ public class ProgramareServiceImpl implements ProgramareService {
                 return existingProgramare;
             })
             .flatMap(programareRepository::save)
+            .flatMap(saved -> {
+                if (com.mycompany.myapp.domain.enumeration.ProgramareStatus.ANULATA.equals(saved.getStatus())) {
+                    LOG.info(
+                        "WaitlistTrigger: TRIGGERED for Appointment {} (Partial Update to ANULATA). Medic ID: {}, Date: {}",
+                        saved.getId(),
+                        saved.getMedicId(),
+                        saved.getDataProgramare()
+                    );
+                    return waitlistService
+                        .checkWaitlistOnCancellation(saved.getMedicId(), saved.getDataProgramare())
+                        .then(Mono.just(saved));
+                }
+                return Mono.just(saved);
+            })
             .map(programareMapper::toDto);
     }
 
@@ -141,6 +178,20 @@ public class ProgramareServiceImpl implements ProgramareService {
 
     @Override
     @Transactional(readOnly = true)
+    public Flux<ProgramareDTO> findAllByPacientUserLogin(String login, Pageable pageable) {
+        LOG.debug("Request to get all Programares for Pacient user login {}", login);
+        return programareRepository.findAllByPacientUserLogin(login, pageable).map(programareMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Mono<Long> countAllByPacientUserLogin(String login) {
+        LOG.debug("Request to count all Programares for Pacient user login {}", login);
+        return programareRepository.countAllByPacientUserLogin(login);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Mono<ProgramareDTO> findOne(Long id) {
         LOG.debug("Request to get Programare : {}", id);
         return programareRepository.findById(id).map(programareMapper::toDto);
@@ -149,6 +200,19 @@ public class ProgramareServiceImpl implements ProgramareService {
     @Override
     public Mono<Void> delete(Long id) {
         LOG.debug("Request to delete Programare : {}", id);
-        return programareRepository.deleteById(id);
+        return programareRepository
+            .findById(id)
+            .flatMap(existing -> {
+                LOG.info(
+                    "WaitlistTrigger: TRIGGERED for Appointment {} (DELETED). Medic ID: {}, Date: {}",
+                    id,
+                    existing.getMedicId(),
+                    existing.getDataProgramare()
+                );
+                return programareRepository
+                    .deleteById(id)
+                    .then(waitlistService.checkWaitlistOnCancellation(existing.getMedicId(), existing.getDataProgramare()).then());
+            })
+            .switchIfEmpty(programareRepository.deleteById(id));
     }
 }

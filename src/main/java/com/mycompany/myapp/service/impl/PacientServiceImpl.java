@@ -87,4 +87,11 @@ public class PacientServiceImpl implements PacientService {
         LOG.debug("Request to get Pacient by user login: {}", login);
         return pacientRepository.findByUserLogin(login).map(pacientMapper::toDto);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Mono<PacientDTO> findByUserId(Long userId) {
+        LOG.debug("Request to get Pacient by user ID: {}", userId);
+        return pacientRepository.findByUser(userId).next().map(pacientMapper::toDto);
+    }
 }

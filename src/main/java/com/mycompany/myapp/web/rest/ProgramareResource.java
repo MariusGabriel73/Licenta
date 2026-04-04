@@ -222,21 +222,44 @@ public class ProgramareResource {
                                     .body(countWithEntities.getT2())
                             )
                     );
-            } else if (pacientId != null) {
-                return programareService
-                    .countAllByPacientId(pacientId)
-                    .zipWith(programareService.findAllByPacientId(pacientId, pageable).collectList())
-                    .map(countWithEntities ->
-                        ResponseEntity.ok()
-                            .headers(
-                                PaginationUtil.generatePaginationHttpHeaders(
-                                    ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
-                                    new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+            }
+            // SECURITY: If user is a PACIENT, restrict them to their own appointments by login
+            return SecurityUtils.hasCurrentUserThisAuthority("ROLE_PACIENT").flatMap(isPacient -> {
+                if (Boolean.TRUE.equals(isPacient)) {
+                    return SecurityUtils.getCurrentUserLogin()
+                        .flatMap(login ->
+                            programareService
+                                .countAllByPacientUserLogin(login)
+                                .zipWith(programareService.findAllByPacientUserLogin(login, pageable).collectList())
+                                .map(countWithEntities ->
+                                    ResponseEntity.ok()
+                                        .headers(
+                                            PaginationUtil.generatePaginationHttpHeaders(
+                                                ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                                                new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                                            )
+                                        )
+                                        .body(countWithEntities.getT2())
                                 )
-                            )
-                            .body(countWithEntities.getT2())
-                    );
-            } else {
+                        );
+                }
+                // Admin or other roles with explicit pacientId filter
+                if (pacientId != null) {
+                    return programareService
+                        .countAllByPacientId(pacientId)
+                        .zipWith(programareService.findAllByPacientId(pacientId, pageable).collectList())
+                        .map(countWithEntities ->
+                            ResponseEntity.ok()
+                                .headers(
+                                    PaginationUtil.generatePaginationHttpHeaders(
+                                        ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                                        new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                                    )
+                                )
+                                .body(countWithEntities.getT2())
+                        );
+                }
+                // Fallback to all (only for ADMIN)
                 return programareService
                     .countAll()
                     .zipWith(programareService.findAll(pageable).collectList())
@@ -250,7 +273,7 @@ public class ProgramareResource {
                             )
                             .body(countWithEntities.getT2())
                     );
-            }
+            });
         });
     }
 

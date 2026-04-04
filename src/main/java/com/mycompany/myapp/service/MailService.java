@@ -116,4 +116,31 @@ public class MailService {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
     }
+
+    public void sendWaitlistNotificationEmail(User user, String medicName, String dateStr) {
+        LOG.info("Preparing waitlist notification email for user '{}' (email: '{}')", user.getLogin(), user.getEmail());
+        if (user.getEmail() == null) {
+            LOG.warn("Cannot send waitlist email: user '{}' has no email address!", user.getLogin());
+            return;
+        }
+        Mono.defer(() -> {
+            try {
+                Locale locale = Locale.forLanguageTag(user.getLangKey() != null ? user.getLangKey() : "ro");
+                Context context = new Context(locale);
+                context.setVariable(USER, user);
+                context.setVariable("medicName", medicName);
+                context.setVariable("dateStr", dateStr);
+                context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+
+                String content = templateEngine.process("mail/waitlistNotification", context);
+                String subject = "Loc disponibil găsit - MedicalSystem";
+                LOG.info("Sending waitlist email to '{}' with subject '{}'", user.getEmail(), subject);
+                sendEmailSync(user.getEmail(), subject, content, false, true);
+                LOG.info("Waitlist email sent successfully to '{}'", user.getEmail());
+            } catch (Exception e) {
+                LOG.error("Failed to send waitlist email to '{}'", user.getEmail(), e);
+            }
+            return Mono.empty();
+        }).subscribe();
+    }
 }

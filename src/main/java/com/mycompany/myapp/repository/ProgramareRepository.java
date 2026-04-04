@@ -70,6 +70,10 @@ interface ProgramareRepositoryInternal {
 
     Mono<Long> countAllByPacientId(Long pacientId);
 
+    Flux<Programare> findAllByPacientUserLogin(String login, Pageable pageable);
+
+    Mono<Long> countAllByPacientUserLogin(String login);
+
     Flux<Programare> findAll();
 
     Mono<Programare> findById(Long id);
