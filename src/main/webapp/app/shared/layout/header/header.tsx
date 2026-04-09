@@ -43,8 +43,8 @@ const Header = (props: IHeaderProps) => {
       {renderDevRibbon()}
       <LoadingBar className="loading-bar" />
       <Navbar data-cy="navbar" light expand="md" fixed="top" className="jh-navbar glass-panel pb-2 pt-2 shadow-sm">
-        <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
         <Brand />
+        <NavbarToggler aria-label="Menu" onClick={toggleMenu} className="ms-auto" />
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ms-auto" navbar>
             <Home />

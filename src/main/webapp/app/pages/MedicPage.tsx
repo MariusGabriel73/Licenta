@@ -138,28 +138,35 @@ export default function MedicPage() {
   const lastFetchParams = React.useRef<string>('');
 
   const loadAppointments = useCallback(async () => {
-    if (!selectedDate || !medicId || !locatieId) {
+    if (!selectedDate || !medicId) {
       setAppointments([]);
       return;
     }
 
     const { startIso, endIso } = toDayRangeISO(selectedDate);
-    const paramsKey = `${medicId}-${locatieId}-${startIso}-${endIso}`;
+    const paramsKey = `${medicId}-all-${startIso}-${endIso}`;
 
     if (loading || lastFetchParams.current === paramsKey) return;
 
     setLoading(true);
     lastFetchParams.current = paramsKey;
     try {
-      const items = await getAppointmentsForMedicOnDate(medicId, locatieId, startIso, endIso);
+      // Preluăm TOATE programările pe ziua respectivă pentru medicul selectat
+      const items = await getAppointmentsForMedicRange(startIso, endIso, medicId);
       items.sort((a, b) => (a.dataProgramare < b.dataProgramare ? -1 : 1));
-      setAppointments(items);
+
+      // Filtrare opțională după clinica/locatie dacă sunt selectate în UI
+      let filtered = items;
+      if (clinicaId) filtered = filtered.filter(a => a.clinicaId === clinicaId);
+      if (locatieId) filtered = filtered.filter(a => a.locatieId === locatieId);
+
+      setAppointments(filtered);
     } catch (err) {
       console.error('Error loading appointments:', err);
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, medicId, locatieId, loading]);
+  }, [selectedDate, medicId, clinicaId, locatieId, loading]);
 
   const [complianceData, setComplianceData] = useState<{ [key: number]: number }>({});
 
@@ -270,78 +277,133 @@ export default function MedicPage() {
           </div>
           <div className="card-body p-0">
             <div className="calendar-grid">
-              {['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'].map(d => (
+              {['LUN', 'MAR', 'MIE', 'JOI', 'VIN', 'SÂM', 'DUM'].map(d => (
                 <div
                   key={d}
-                  className="calendar-day-header py-3 text-center text-muted small fw-bold text-uppercase border-bottom border-light"
+                  className="calendar-day-header text-center py-2 fw-bold text-secondary border-bottom border-end border-light px-0"
+                  style={{ minWidth: 0 }}
                 >
-                  {d}
+                  <span className="d-none d-sm-inline" style={{ fontSize: '0.75rem' }}>
+                    {d}
+                  </span>
+                  <span className="d-inline d-sm-none" style={{ fontSize: '0.7rem' }}>
+                    {d.charAt(0)}
+                  </span>
                 </div>
               ))}
               {(() => {
                 const days = [];
                 const startOfMonth = currentMonth.startOf('month');
                 const endOfMonth = currentMonth.endOf('month');
-                const startDay = (startOfMonth.day() + 6) % 7; // Ajustăm pt Luni start
+                const startDay = startOfMonth.day(); // 0 (Sun) to 6 (Sat)
+                const adjustedStartDay = startDay === 0 ? 6 : startDay - 1;
 
-                // Zile goale înainte
-                for (let i = 0; i < startDay; i++) {
+                // Zilele din luna PRECEDENTA
+                const prevMonth = startOfMonth.subtract(1, 'month');
+                const prevMonthDays = prevMonth.daysInMonth();
+                for (let i = adjustedStartDay - 1; i >= 0; i--) {
+                  const d = prevMonthDays - i;
                   days.push(
-                    <div key={`prev-${i}`} className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light" />,
+                    <div
+                      key={`prev-${d}`}
+                      className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light p-1 p-md-2 opacity-50"
+                    >
+                      <div className="text-secondary small" style={{ fontSize: '0.75rem' }}>
+                        {d}
+                      </div>
+                    </div>,
                   );
                 }
 
-                // Zilele lunii
+                // Zilele lunii CURENTE
                 for (let d = 1; d <= endOfMonth.date(); d++) {
                   const date = startOfMonth.date(d);
                   const dateStr = date.format('YYYY-MM-DD');
                   const isSelected = selectedDate === dateStr;
-                  const isToday = dayjs().format('YYYY-MM-DD') === dateStr;
+                  const isToday = date.isSame(dayjs(), 'day');
 
-                  const dayAppts = monthlyAppointments.filter(a => dayjs(a.dataProgramare).format('YYYY-MM-DD') === dateStr);
+                  const dayAppts = monthlyAppointments.filter(a => dayjs(a.dataProgramare).isSame(date, 'day'));
 
                   days.push(
                     <div
                       key={dateStr}
-                      className={`calendar-cell border-end border-bottom border-light p-2 position-relative cursor-pointer transition-all ${isSelected ? 'bg-primary bg-opacity-10 shadow-inset' : 'hover-bg-light'}`}
+                      className={`calendar-cell border-end border-bottom border-light p-1 p-md-2 position-relative cursor-pointer transition-all ${
+                        isSelected ? 'bg-primary bg-opacity-10 shadow-inset border-primary border-2' : 'hover-bg-light'
+                      }`}
                       onClick={() => setSelectedDate(dateStr)}
-                      style={{ minHeight: '100px', cursor: 'pointer' }}
+                      style={{ cursor: 'pointer' }}
                     >
                       <div className="d-flex justify-content-between align-items-start mb-1">
-                        <span className={`small fw-bold px-2 py-1 rounded-pill ${isToday ? 'bg-primary text-white' : 'text-secondary'}`}>
+                        <span
+                          className={`calendar-day-number fw-bold rounded-pill ${
+                            isToday
+                              ? 'bg-primary text-white'
+                              : isSelected
+                                ? 'bg-white text-primary border border-primary'
+                                : 'text-secondary'
+                          }`}
+                        >
                           {d}
                         </span>
                         {dayAppts.length > 0 && (
-                          <span className="badge rounded-pill bg-soft-primary small" style={{ fontSize: '0.65rem' }}>
+                          <span className="badge rounded-pill bg-soft-primary small p-1 p-md-2" style={{ fontSize: '0.65rem' }}>
                             {dayAppts.length}
                           </span>
                         )}
                       </div>
                       <div className="calendar-events-container overflow-hidden">
-                        {dayAppts.slice(0, 2).map((a, idx) => (
-                          <div
-                            key={a.id || idx}
-                            className="calendar-event-pill bg-soft-success mb-1 truncate small px-2 rounded-pill shadow-sm"
-                            style={{ fontSize: '0.7rem', padding: '2px 0', cursor: 'pointer' }}
-                            onClick={e => {
-                              e.stopPropagation();
-                              if (a.clinicaId) setClinicaId(a.clinicaId);
-                              if (a.locatieId) setLocatieId(a.locatieId);
-                              setSelectedDate(dayjs(a.dataProgramare).format('YYYY-MM-DD'));
-                            }}
-                          >
-                            {dayjs(a.dataProgramare).format('HH:mm')} {a.pacient?.user?.lastName || 'Pacient'}
-                          </div>
-                        ))}
-                        {dayAppts.length > 2 && (
-                          <div className="text-muted small ps-2" style={{ fontSize: '0.6rem' }}>
-                            + încă {dayAppts.length - 2}
-                          </div>
-                        )}
+                        {/* Desktop: Text Pills */}
+                        <div className="d-none d-md-block">
+                          {dayAppts.slice(0, 2).map((a, idx) => (
+                            <div
+                              key={a.id || idx}
+                              className="calendar-event-pill bg-soft-success mb-1 truncate small px-2 rounded-pill shadow-sm"
+                              style={{ fontSize: '0.7rem', cursor: 'pointer' }}
+                              onClick={e => {
+                                e.stopPropagation();
+                                if (a.clinicaId) setClinicaId(a.clinicaId);
+                                if (a.locatieId) setLocatieId(a.locatieId);
+                                if (a.medicId) setMedicId(a.medicId);
+                                setSelectedDate(dayjs(a.dataProgramare).format('YYYY-MM-DD'));
+                              }}
+                            >
+                              <span className="fw-bold">{dayjs(a.dataProgramare).format('HH:mm')}</span>{' '}
+                              {a.pacient?.user?.lastName || 'Pacient'}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Mobile: Simple Dots */}
+                        <div className="d-flex d-md-none justify-content-center gap-1 flex-wrap pt-1">
+                          {dayAppts.slice(0, 3).map((a, idx) => (
+                            <div key={idx} className="bg-success rounded-circle" style={{ width: '6px', height: '6px' }} />
+                          ))}
+                          {dayAppts.length > 3 && (
+                            <div className="text-success fw-bold" style={{ fontSize: '0.6rem', lineHeight: '1' }}>
+                              +
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>,
                   );
                 }
+
+                // Zilele lunii URMATOARE (doar pana la finalul randului curent)
+                const remainingInRow = days.length % 7 === 0 ? 0 : 7 - (days.length % 7);
+                for (let i = 1; i <= remainingInRow; i++) {
+                  days.push(
+                    <div
+                      key={`next-${i}`}
+                      className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light p-1 p-md-2 opacity-25"
+                    >
+                      <div className="text-secondary small" style={{ fontSize: '0.75rem' }}>
+                        {i}
+                      </div>
+                    </div>,
+                  );
+                }
+
                 return days;
               })()}
             </div>
@@ -403,7 +465,7 @@ export default function MedicPage() {
               </div>
             )}
 
-            {/* Selector de MEDIC numai pentru ADMIN (pentru medici reali îl poți ascunde și seta automat medicId-ul curent) */}
+            {/* Selector de MEDIC numai pentru ADMIN */}
             {isAdmin && (
               <div className="col-md-4">
                 <label className="form-label">Medic</label>
@@ -425,7 +487,6 @@ export default function MedicPage() {
                       <option key={m.id} value={m.id}>
                         {m.gradProfesional ? `${m.gradProfesional} ` : ''}
                         {numeMedic}
-                        {m.disponibil === false ? ' (indisponibil)' : ''}
                       </option>
                     );
                   })}
@@ -466,19 +527,19 @@ export default function MedicPage() {
       <h3 className="mb-3">Programări ({dayjs(selectedDate).format('YYYY-MM-DD')})</h3>
       <div className="card glass-panel hover-lift border-0">
         <div className="card-body">
-          {!locatieId || (!medicId && isAdmin) ? (
-            <div className="text-muted">Selectează clinica, locația {isAdmin ? 'și medicul' : ''} pentru a vedea agenda.</div>
+          {!medicId && isAdmin ? (
+            <div className="text-muted">Selectează un medic pentru a vedea agenda globală a zilei.</div>
           ) : appointments.length === 0 ? (
-            <div className="text-muted">Nu există programări pentru ziua selectată.</div>
+            <div className="text-muted">Nu există programări pentru ziua selectată în criteriile alese.</div>
           ) : (
-            <div className="table-responsive">
-              <table className="table table-borderless table-hover align-middle mt-2">
+            <div className="table-responsive medic-table-container">
+              <table className="table table-borderless table-hover align-middle mt-2 medic-res-table">
                 <thead>
                   <tr>
                     <th>Ora</th>
                     <th>Pacient</th>
+                    <th>Locație</th>
                     <th>Complianță</th>
-                    <th>Observații</th>
                     <th>Status</th>
                     <th style={{ width: 260 }}>Acțiuni</th>
                   </tr>
@@ -487,25 +548,46 @@ export default function MedicPage() {
                   {appointments.map(a => {
                     const d = dayjs(a.dataProgramare);
                     return (
-                      <tr key={a.id}>
-                        <td>{d.format('HH:mm')}</td>
-                        <td>
-                          {a.pacient?.user?.lastName || a.pacient?.user?.firstName
-                            ? `${a.pacient.user.lastName || ''} ${a.pacient.user.firstName || ''}`.trim()
-                            : a.pacient?.user?.login
-                              ? `Pacient: ${a.pacient.user.login}`
-                              : a.pacient?.cnp
-                                ? `Pacient (CNP: ${a.pacient.cnp})`
-                                : a.pacientId
-                                  ? `Pacient #${a.pacientId}`
-                                  : '-'}
+                      <tr key={a.id} className="res-tr">
+                        <td data-label="Ora" className="res-td">
+                          {d.format('HH:mm')}
                         </td>
-                        <td>
+                        <td data-label="Pacient" className="res-td">
+                          <div className="fw-bold">
+                            {a.pacient?.user?.lastName || a.pacient?.user?.firstName
+                              ? `${a.pacient.user.lastName || ''} ${a.pacient.user.firstName || ''}`.trim()
+                              : a.pacient?.user?.login
+                                ? `Pacient: ${a.pacient.user.login}`
+                                : a.pacient?.cnp
+                                  ? `Pacient (CNP: ${a.pacient.cnp})`
+                                  : a.pacientId
+                                    ? `Pacient #${a.pacientId}`
+                                    : '-'}
+                          </div>
+                        </td>
+                        <td data-label="Locație" className="res-td">
+                          <div className="d-flex flex-column" style={{ maxWidth: 200 }}>
+                            <span className="fw-bold text-dark small" style={{ fontSize: '0.8rem' }}>
+                              {a.clinica?.nume || 'Clinică nespecificată'}
+                            </span>
+                            <span className="text-secondary" style={{ fontSize: '0.7rem' }}>
+                              {a.locatie?.oras ? `${a.locatie.oras} — ` : ''}
+                              {a.locatie?.adresa || ''}
+                            </span>
+                          </div>
+                        </td>
+                        <td data-label="Complianță" className="res-td">
                           {a.pacientId && complianceData[a.pacientId] !== undefined ? (
                             <div className="d-flex align-items-center gap-2">
                               <div className="progress rounded-pill flex-grow-1" style={{ height: '6px', minWidth: '60px' }}>
                                 <div
-                                  className={`progress-bar ${complianceData[a.pacientId] > 80 ? 'bg-success' : complianceData[a.pacientId] > 50 ? 'bg-warning' : 'bg-danger'}`}
+                                  className={`progress-bar ${
+                                    complianceData[a.pacientId] > 80
+                                      ? 'bg-success'
+                                      : complianceData[a.pacientId] > 50
+                                        ? 'bg-warning'
+                                        : 'bg-danger'
+                                  }`}
                                   style={{ width: `${complianceData[a.pacientId]}%` }}
                                 />
                               </div>
@@ -515,10 +597,7 @@ export default function MedicPage() {
                             <span className="text-muted small">N/A</span>
                           )}
                         </td>
-                        <td className="text-truncate" style={{ maxWidth: 200 }} title={a.observatii || ''}>
-                          {a.observatii || <span className="text-muted">—</span>}
-                        </td>
-                        <td>
+                        <td data-label="Status" className="res-td">
                           <span
                             className={
                               a.status === ProgramareStatus.ACTIVA
@@ -531,8 +610,8 @@ export default function MedicPage() {
                             {a.status}
                           </span>
                         </td>
-                        <td>
-                          <div className="d-flex flex-wrap gap-2">
+                        <td data-label="Acțiuni" className="res-td">
+                          <div className="d-flex flex-wrap gap-2 btn-group-res">
                             {hasFinalizata && a.status === ProgramareStatus.ACTIVA && (
                               <button type="button" className="btn btn-outline-success btn-sm" onClick={() => markFinalizata(a)}>
                                 Marchează finalizată
@@ -578,13 +657,23 @@ export default function MedicPage() {
         .calendar-grid {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
-          background: rgba(255, 255, 255, 0.4);
+          background: #fff;
         }
         .calendar-cell {
+          border-right: 1px solid #f0f0f0;
+          border-bottom: 1px solid #f0f0f0;
           transition: all 0.2s ease;
         }
+        .calendar-day-number {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          font-size: 0.75rem;
+        }
         .hover-bg-light:hover {
-          background-color: rgba(255, 255, 255, 0.8) !important;
+          background-color: rgba(0, 0, 0, 0.02) !important;
         }
         .calendar-event-pill {
           white-space: nowrap;
@@ -595,6 +684,58 @@ export default function MedicPage() {
         }
         .shadow-inset {
           box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        @media (max-width: 768px) {
+          .calendar-cell {
+            min-height: 50px !important;
+          }
+          .calendar-day-number {
+            width: 20px;
+            height: 20px;
+            font-size: 0.65rem;
+          }
+          .medic-res-table thead {
+            display: none;
+          }
+          .res-tr {
+            display: block;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          }
+          .res-td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0 !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            text-align: right;
+          }
+          .res-td:last-child {
+            border-bottom: none !important;
+            flex-direction: column;
+            align-items: stretch;
+            text-align: left;
+          }
+          .res-td::before {
+            content: attr(data-label);
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.025em;
+          }
+          .btn-group-res {
+            margin-top: 0.5rem;
+            width: 100%;
+          }
+          .btn-group-res .btn {
+            flex: 1;
+            padding: 0.5rem;
+          }
         }
       `}</style>
     </div>

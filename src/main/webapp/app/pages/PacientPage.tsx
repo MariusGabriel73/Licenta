@@ -169,9 +169,9 @@ const BookingForm: React.FC<BookingFormProps> = props => {
   return (
     <div className="card mb-5 glass-panel hover-lift border-0 p-2 p-md-4">
       <div className="card-body">
-        <div className="row g-4">
+        <div className="row g-3 g-md-4">
           {/* Step 1: Locatie */}
-          <div className="col-md-3">
+          <div className="col-12 col-sm-6 col-md-3">
             <label className="form-label fw-semibold">1. Locație</label>
             <select
               className="form-select"
@@ -195,7 +195,7 @@ const BookingForm: React.FC<BookingFormProps> = props => {
           </div>
 
           {/* Step 2: Clinica */}
-          <div className="col-md-3">
+          <div className="col-12 col-sm-6 col-md-3">
             <label className="form-label fw-semibold">2. Clinică</label>
             <select
               className="form-select"
@@ -221,7 +221,7 @@ const BookingForm: React.FC<BookingFormProps> = props => {
           </div>
 
           {/* Step 3: Sectie */}
-          <div className="col-md-3">
+          <div className="col-12 col-sm-6 col-md-3">
             <label className="form-label fw-semibold">3. Secție medicală</label>
             <select
               className="form-select"
@@ -244,7 +244,7 @@ const BookingForm: React.FC<BookingFormProps> = props => {
           </div>
 
           {/* Step 4: Medic */}
-          <div className="col-md-3">
+          <div className="col-12 col-sm-6 col-md-3">
             <label className="form-label fw-semibold">4. Medic</label>
             <select
               className="form-select"
@@ -318,7 +318,8 @@ const BookingForm: React.FC<BookingFormProps> = props => {
                 <button
                   key={s.iso}
                   type="button"
-                  className={`btn rounded-pill btn-sm ${selectedSlotIso === s.iso ? 'btn-primary' : 'btn-outline-primary'}`}
+                  className={`btn rounded-pill px-4 py-2 ${selectedSlotIso === s.iso ? 'btn-primary' : 'btn-outline-primary'}`}
+                  style={{ minWidth: '85px' }}
                   disabled={s.disabled}
                   onClick={() => setSelectedSlotIso(s.iso)}
                 >
@@ -329,9 +330,9 @@ const BookingForm: React.FC<BookingFormProps> = props => {
           )}
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 d-flex flex-column flex-md-row gap-3">
           <button
-            className="btn btn-success"
+            className="btn btn-success rounded-pill px-5 py-2 fw-bold"
             disabled={loading || !isAuthenticated || !pacientId || !medicId || !locatieId || !selectedSlotIso}
             onClick={handleCreateOrUpdate}
           >
@@ -868,16 +869,18 @@ export default function PacientPage() {
       />
 
       <h3 className="mb-3">Programările mele</h3>
-      <AppointmentTable
-        appointments={appointments}
-        rescheduleId={rescheduleId}
-        startReschedule={startReschedule}
-        handleCancel={handleCancel}
-        onViewPrescription={a => {
-          setSelectedAppointmentForView(a);
-          setShowViewModal(true);
-        }}
-      />
+      <div className="table-wrapper">
+        <AppointmentTable
+          appointments={appointments}
+          rescheduleId={rescheduleId}
+          startReschedule={startReschedule}
+          handleCancel={handleCancel}
+          onViewPrescription={a => {
+            setSelectedAppointmentForView(a);
+            setShowViewModal(true);
+          }}
+        />
+      </div>
 
       {loading && (
         <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 1080 }}>
@@ -890,6 +893,36 @@ export default function PacientPage() {
       )}
 
       <PrescriptionModal isOpen={showViewModal} toggle={() => setShowViewModal(false)} appointment={selectedAppointmentForView} />
+
+      <style>{`
+        .glass-panel {
+          backdrop-filter: blur(10px);
+          background: rgba(255, 255, 255, 0.7);
+        }
+        .hover-lift:hover {
+          transform: translateY(-5px);
+          transition: transform 0.2s;
+        }
+        @media (max-width: 768px) {
+          .container {
+            padding-left: 15px;
+            padding-right: 15px;
+          }
+          h2 {
+            font-size: 1.5rem !important;
+          }
+          .card-body {
+            padding: 1.25rem !important;
+          }
+          .btn-sm {
+            padding: 0.5rem 1rem !important;
+          }
+          .table td, .table th {
+            font-size: 0.85rem !important;
+            padding: 12px 8px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
   type ID,
 } from 'app/shared/api/pacient-api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Card, CardBody } from 'reactstrap';
 
 export default function HomePage() {
   const account = useAppSelector(state => state.authentication.account);
@@ -104,56 +105,94 @@ export default function HomePage() {
     const days = [];
     const startOfMonth = currentMonth.startOf('month');
     const endOfMonth = currentMonth.endOf('month');
-    const startDay = (startOfMonth.day() + 6) % 7; // Monday start
+    const startDay = startOfMonth.day(); // 0 (Sun) to 6 (Sat)
 
-    for (let i = 0; i < startDay; i++) {
-      days.push(<div key={`prev-${i}`} className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light" />);
+    // Ajustam startDay pentru saptamana care incepe Luni (L=0, D=6)
+    const adjustedStartDay = startDay === 0 ? 6 : startDay - 1;
+
+    // Zilele din luna PRECEDENTA
+    const prevMonth = startOfMonth.subtract(1, 'month');
+    const prevMonthDays = prevMonth.daysInMonth();
+    for (let i = adjustedStartDay - 1; i >= 0; i--) {
+      const d = prevMonthDays - i;
+      days.push(
+        <div key={`prev-${d}`} className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light p-1 p-md-2 opacity-50">
+          <div className="text-secondary small">{d}</div>
+        </div>,
+      );
     }
 
+    // Zilele lunii CURENTE
     for (let d = 1; d <= endOfMonth.date(); d++) {
       const date = startOfMonth.date(d);
       const dateStr = date.format('YYYY-MM-DD');
-      const isToday = dayjs().format('YYYY-MM-DD') === dateStr;
-      const dayAppts = appointments.filter(a => dayjs(a.dataProgramare).format('YYYY-MM-DD') === dateStr);
-      const isSelected = selectedDayProg === dateStr;
+      const isToday = date.isSame(dayjs(), 'day');
+      const isSelected = dateStr === selectedDayProg;
+      const dayAppts = appointments.filter(a => dayjs(a.dataProgramare).isSame(date, 'day'));
 
       days.push(
         <div
           key={dateStr}
           onClick={() => setSelectedDayProg(dateStr)}
-          className={`calendar-cell border-end border-bottom border-light p-2 position-relative transition-all cursor-pointer ${
+          className={`calendar-cell border-end border-bottom border-light p-1 p-md-2 position-relative transition-all cursor-pointer ${
             isSelected ? 'bg-soft-primary border-primary border-2 shadow-inner' : 'hover-bg-light'
           }`}
-          style={{ minHeight: '120px', cursor: 'pointer' }}
+          style={{ cursor: 'pointer' }}
         >
           <div className="d-flex justify-content-between align-items-start mb-1">
             <span
-              className={`small fw-bold px-2 py-1 rounded-pill ${
+              className={`calendar-day-number fw-bold rounded-pill ${
                 isToday ? 'bg-primary text-white' : isSelected ? 'bg-white text-primary border border-primary' : 'text-secondary'
               }`}
             >
               {d}
             </span>
             {dayAppts.length > 0 && (
-              <span className="badge rounded-pill bg-soft-primary small" style={{ fontSize: '0.65rem' }}>
+              <span className="badge rounded-pill bg-soft-primary small p-1 p-md-2" style={{ fontSize: '0.65rem' }}>
                 {dayAppts.length}
               </span>
             )}
           </div>
           <div className="calendar-events-container overflow-hidden">
-            {dayAppts.map((a, idx) => (
-              <div
-                key={a.id || idx}
-                className="calendar-event-pill bg-soft-info mb-1 truncate small px-2 rounded-pill border-start border-primary"
-                style={{ fontSize: '0.7rem' }}
-              >
-                <span className="fw-bold">{dayjs(a.dataProgramare).format('HH:mm')}</span> {a.medic?.user?.lastName || 'Medic'}
-              </div>
-            ))}
+            {/* Desktop: Text Pills */}
+            <div className="d-none d-md-block">
+              {dayAppts.map((a, idx) => (
+                <div
+                  key={a.id || idx}
+                  className="calendar-event-pill bg-soft-info mb-1 truncate small px-2 rounded-pill border-start border-primary"
+                  style={{ fontSize: '0.7rem' }}
+                >
+                  <span className="fw-bold">{dayjs(a.dataProgramare).format('HH:mm')}</span> {a.medic?.user?.lastName || 'Medic'}
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile: Simple Dots */}
+            <div className="d-flex d-md-none justify-content-center gap-1 flex-wrap pt-1">
+              {dayAppts.slice(0, 3).map((a, idx) => (
+                <div key={idx} className="bg-primary rounded-circle" style={{ width: '6px', height: '6px' }} />
+              ))}
+              {dayAppts.length > 3 && (
+                <div className="text-primary fw-bold" style={{ fontSize: '0.6rem', lineHeight: '1' }}>
+                  +
+                </div>
+              )}
+            </div>
           </div>
         </div>,
       );
     }
+
+    // Zilele lunii URMATOARE (doar pana la finalul randului curent)
+    const remainingInRow = days.length % 7 === 0 ? 0 : 7 - (days.length % 7);
+    for (let i = 1; i <= remainingInRow; i++) {
+      days.push(
+        <div key={`next-${i}`} className="calendar-cell bg-light bg-opacity-10 border-end border-bottom border-light p-1 p-md-2 opacity-25">
+          <div className="text-secondary small">{i}</div>
+        </div>,
+      );
+    }
+
     return days;
   };
 
@@ -179,15 +218,20 @@ export default function HomePage() {
         </div>
       ))}
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4 mb-4 pt-2">
         <div>
-          <h2 className="mb-0 fw-bold text-dark">Bun venit, {account?.firstName || account?.login}!</h2>
-          <p className="text-secondary">Iată situația sănătății tale pentru ziua de azi.</p>
+          <h2 className="fw-bold text-dark mb-1 h3">Bun venit, {account?.lastName || account?.login}!</h2>
+          <p className="text-muted mb-0 opacity-75">Iată situația sănătății tale pentru ziua de azi.</p>
         </div>
-        <Link to="/pacient" className="btn btn-primary rounded-pill shadow-sm px-4 fw-semibold">
-          <FontAwesomeIcon icon="plus" className="me-2" />
-          Programare Nouă
-        </Link>
+        <div className="mt-2 mt-md-0">
+          <Link
+            to="/pacient-page"
+            className="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold d-inline-flex align-items-center transition-all hover-lift"
+          >
+            <FontAwesomeIcon icon="plus" className="me-2" />
+            Programare Nouă
+          </Link>
+        </div>
       </div>
 
       <div className="row">
@@ -218,12 +262,18 @@ export default function HomePage() {
             </div>
             <div className="card-body p-0">
               <div className="calendar-grid">
-                {['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'].map(d => (
+                {['LUN', 'MAR', 'MIE', 'JOI', 'VIN', 'SÂM', 'DUM'].map(d => (
                   <div
                     key={d}
-                    className="calendar-day-header py-3 text-center text-muted small fw-bold text-uppercase border-bottom border-light bg-light bg-opacity-50"
+                    className="calendar-day-header text-center py-2 fw-bold text-secondary border-bottom border-end border-light px-0"
+                    style={{ minWidth: 0 }}
                   >
-                    {d}
+                    <span className="d-none d-sm-inline" style={{ fontSize: '0.75rem' }}>
+                      {d}
+                    </span>
+                    <span className="d-inline d-sm-none" style={{ fontSize: '0.7rem' }}>
+                      {d.charAt(0)}
+                    </span>
                   </div>
                 ))}
                 {daysInMonth()}
@@ -231,7 +281,6 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-
         <div className="col-lg-4">
           <div className="card glass-panel border-0 shadow-sm rounded-4 overflow-hidden h-100">
             <div className="card-header bg-primary text-white py-3 px-4">
@@ -380,10 +429,14 @@ export default function HomePage() {
       )}
 
       <style>{`
+        .calendar-cell {
+          min-height: 120px;
+        }
         .calendar-grid {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
           background: #fff;
+          width: 100%;
         }
         .calendar-cell {
           border-right: 1px solid #f0f0f0;
@@ -420,6 +473,53 @@ export default function HomePage() {
         }
         .transition-all {
           transition: all 0.2s ease-in-out;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+          .calendar-cell {
+            min-height: 50px !important;
+            padding: 2px !important;
+          }
+          .calendar-day-number {
+             font-size: 0.75rem !important;
+             padding: 2px 6px !important;
+          }
+          .calendar-day-header {
+            padding: 6px 0 !important;
+            font-size: 0.65rem !important;
+            color: #adb5bd;
+          }
+          .card-header h4 {
+            font-size: 1rem !important;
+          }
+          .calendar-events-container {
+            min-height: 10px;
+            margin-top: 0 !important;
+          }
+          .btn-group.shadow-sm {
+             transform: scale(0.8);
+          }
+          .container {
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+            max-width: 100% !important;
+          }
+          .card-body.p-4 {
+            padding: 0.5rem !important;
+          }
+        }
+
+        @media (max-width: 576px) {
+           .calendar-cell {
+            min-height: 45px !important;
+          }
+          h2 {
+            font-size: 1.3rem !important;
+          }
+          .card-body.p-4 {
+            padding: 1rem !important;
+          }
         }
       `}</style>
     </div>
