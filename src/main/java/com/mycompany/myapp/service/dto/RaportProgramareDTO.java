@@ -67,11 +67,10 @@ public class RaportProgramareDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof RaportProgramareDTO)) {
+        if (!(o instanceof RaportProgramareDTO raportProgramareDTO)) {
             return false;
         }
 
-        RaportProgramareDTO raportProgramareDTO = (RaportProgramareDTO) o;
         if (this.id == null) {
             return false;
         }

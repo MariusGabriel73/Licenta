@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -208,7 +209,7 @@ class MailServiceIT {
             URL resource = this.getClass().getClassLoader().getResource(propertyFilePath);
             Path filePath = Path.of(resource.toURI());
             Properties properties = new Properties();
-            properties.load(new InputStreamReader(Files.newInputStream(filePath), Charset.forName("UTF-8")));
+            properties.load(new InputStreamReader(Files.newInputStream(filePath), StandardCharsets.UTF_8));
 
             String emailTitle = (String) properties.get("email.test.title");
             assertThat(message.getSubject()).isEqualTo(emailTitle);

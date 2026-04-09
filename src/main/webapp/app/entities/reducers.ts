@@ -8,6 +8,7 @@ import programare from 'app/entities/programare-med-app/programare-med-app.reduc
 import fisaMedicala from 'app/entities/fisa-medicala-med-app/fisa-medicala-med-app.reducer';
 import raportProgramare from 'app/entities/raport-programare-med-app/raport-programare-med-app.reducer';
 import sectie from 'app/entities/sectie-med-app/sectie-med-app.reducer';
+import rezultatAnaliza from 'app/entities/rezultat-analiza-med-app/rezultat-analiza.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const entitiesReducers = {
@@ -21,6 +22,7 @@ const entitiesReducers = {
   fisaMedicala,
   raportProgramare,
   sectie,
+  rezultatAnaliza,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 };
 

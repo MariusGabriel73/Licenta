@@ -79,11 +79,10 @@ public class PacientDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof PacientDTO)) {
+        if (!(o instanceof PacientDTO pacientDTO)) {
             return false;
         }
 
-        PacientDTO pacientDTO = (PacientDTO) o;
         if (this.id == null) {
             return false;
         }

@@ -16,7 +16,7 @@ export default tseslint.config(
     },
   },
   { ignores: ['src/main/docker/'] },
-  { ignores: ['target/classes/static/', 'target/'] },
+  { ignores: ['target/classes/static/', 'target/', 'chatbot-service/'] },
   eslint.configs.recommended,
   {
     files: ['**/*.{js,cjs,mjs}'],

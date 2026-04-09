@@ -58,3 +58,11 @@ export const PatientAppointments = () => (
     </NavLink>
   </NavItem>
 );
+export const MedicalAnalysis = () => (
+  <NavItem>
+    <NavLink tag={Link} to="/analize-medicale" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="flask" />
+      <span>Analize</span>
+    </NavLink>
+  </NavItem>
+);

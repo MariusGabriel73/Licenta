@@ -85,7 +85,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler implemen
         HttpStatusCode statusCode,
         ServerWebExchange request
     ) {
-        body = body == null ? wrapAndCustomizeProblem((Throwable) ex, (ServerWebExchange) request) : body;
+        body = body == null ? wrapAndCustomizeProblem(ex, request) : body;
         if (request.getResponse().isCommitted()) {
             return Mono.error(ex);
         }

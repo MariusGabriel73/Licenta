@@ -13,6 +13,7 @@ import ProgramareMedApp from './programare-med-app';
 import FisaMedicalaMedApp from './fisa-medicala-med-app';
 import RaportProgramareMedApp from './raport-programare-med-app';
 import SectieMedApp from './sectie-med-app';
+import { AnalizeMedicale } from './rezultat-analiza-med-app';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {
@@ -30,6 +31,7 @@ export default () => {
         <Route path="fisa-medicala-med-app/*" element={<FisaMedicalaMedApp />} />
         <Route path="raport-programare-med-app/*" element={<RaportProgramareMedApp />} />
         <Route path="sectie-med-app/*" element={<SectieMedApp />} />
+        <Route path="analize-medicale" element={<AnalizeMedicale />} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </ErrorBoundaryRoutes>
     </div>

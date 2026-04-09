@@ -45,6 +45,8 @@ interface PacientRepositoryInternal {
 
     Flux<Pacient> findAll();
 
+    Flux<Pacient> findAllByMedicLogin(String login);
+
     Mono<Pacient> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Pacient> findAllBy(Pageable pageable, Criteria criteria);

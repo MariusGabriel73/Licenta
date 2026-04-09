@@ -77,11 +77,10 @@ public class ProgramDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ProgramDTO)) {
+        if (!(o instanceof ProgramDTO programDTO)) {
             return false;
         }
 
-        ProgramDTO programDTO = (ProgramDTO) o;
         if (this.id == null) {
             return false;
         }

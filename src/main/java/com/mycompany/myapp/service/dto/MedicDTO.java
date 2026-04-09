@@ -98,11 +98,10 @@ public class MedicDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MedicDTO)) {
+        if (!(o instanceof MedicDTO medicDTO)) {
             return false;
         }
 
-        MedicDTO medicDTO = (MedicDTO) o;
         if (this.id == null) {
             return false;
         }

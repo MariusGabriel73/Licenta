@@ -87,7 +87,7 @@ const ReportFormModal = ({ isOpen, toggle, programare, onSuccess }: IReportFormM
       </ModalHeader>
       <ModalBody className="py-4">
         {error && (
-          <Alert color="danger" className="rounded-pill px-4 shadow-sm mb-4 border-0">
+          <Alert color="danger" className="rounded-pill px-4 shadow-sm mb-4 border-0" fade={false}>
             {error}
           </Alert>
         )}

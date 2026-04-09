@@ -33,6 +33,16 @@ import {
   faUsersCog,
   faWrench,
   faStethoscope,
+  faCapsules,
+  faClock,
+  faCheckCircle,
+  faCalendarCheck,
+  faPills,
+  faFileMedical,
+  faLightbulb,
+  faPrint,
+  faUserMd,
+  faHospital,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -73,5 +83,15 @@ export const loadIcons = () => {
     faUsersCog,
     faWrench,
     faStethoscope,
+    faCapsules,
+    faClock,
+    faCheckCircle,
+    faCalendarCheck,
+    faPills,
+    faFileMedical,
+    faLightbulb,
+    faPrint,
+    faUserMd,
+    faHospital,
   );
 };

@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MedicTestSamples {
 
     private static final Random random = new Random();
-    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     public static Medic getMedicSample1() {
         return new Medic().id(1L).gradProfesional("gradProfesional1").telefon("telefon1");

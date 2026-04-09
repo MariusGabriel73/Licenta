@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class LocatieTestSamples {
 
     private static final Random random = new Random();
-    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     public static Locatie getLocatieSample1() {
         return new Locatie().id(1L).oras("oras1").adresa("adresa1").codPostal("codPostal1");

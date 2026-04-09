@@ -26,6 +26,7 @@ import { useAppSelector } from 'app/config/store';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileMedical, faStethoscope, faPills, faLightbulb, faPrint, faUserMd, faHospital } from '@fortawesome/free-solid-svg-icons';
+// import MedicalChatbot from 'app/shared/chatbot/MedicalChatbot';
 
 const SLOT_MINUTES = 30;
 
@@ -773,6 +774,14 @@ export default function PacientPage() {
       }
       const my = await getMyAppointments(pacientId);
       setAppointments(my);
+
+      // Re-împrospătăm intervalele ocupate pentru medicul și ziua selectată
+      if (medicId && clinicLocatieId && selectedDate) {
+        const { startIso, endIso } = toDayRangeISO(selectedDate);
+        const taken = await getAppointmentsForMedicOnDate(medicId, clinicLocatieId, startIso, endIso);
+        setTakenForDate(taken);
+      }
+
       setSelectedSlotIso('');
       setObservatii('');
     } catch (err: any) {

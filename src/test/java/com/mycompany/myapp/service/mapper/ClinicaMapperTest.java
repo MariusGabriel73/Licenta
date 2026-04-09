@@ -12,7 +12,7 @@ class ClinicaMapperTest {
 
     @BeforeEach
     void setUp() {
-        clinicaMapper = org.mapstruct.factory.Mappers.getMapper(ClinicaMapper.class);
+        clinicaMapper = new ClinicaMapperImpl();
     }
 
     @Test

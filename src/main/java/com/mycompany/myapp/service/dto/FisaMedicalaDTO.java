@@ -78,11 +78,10 @@ public class FisaMedicalaDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FisaMedicalaDTO)) {
+        if (!(o instanceof FisaMedicalaDTO fisaMedicalaDTO)) {
             return false;
         }
 
-        FisaMedicalaDTO fisaMedicalaDTO = (FisaMedicalaDTO) o;
         if (this.id == null) {
             return false;
         }

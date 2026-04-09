@@ -26,6 +26,7 @@ export default function HomePage() {
 
   const [medicationDoses, setMedicationDoses] = useState<any[]>([]);
   const [waitlistEntries, setWaitlistEntries] = useState<any[]>([]);
+  const [selectedDayProg, setSelectedDayProg] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -113,17 +114,26 @@ export default function HomePage() {
       const date = startOfMonth.date(d);
       const dateStr = date.format('YYYY-MM-DD');
       const isToday = dayjs().format('YYYY-MM-DD') === dateStr;
-
       const dayAppts = appointments.filter(a => dayjs(a.dataProgramare).format('YYYY-MM-DD') === dateStr);
+      const isSelected = selectedDayProg === dateStr;
 
       days.push(
         <div
           key={dateStr}
-          className="calendar-cell border-end border-bottom border-light p-2 position-relative hover-bg-light transition-all"
-          style={{ minHeight: '120px' }}
+          onClick={() => setSelectedDayProg(dateStr)}
+          className={`calendar-cell border-end border-bottom border-light p-2 position-relative transition-all cursor-pointer ${
+            isSelected ? 'bg-soft-primary border-primary border-2 shadow-inner' : 'hover-bg-light'
+          }`}
+          style={{ minHeight: '120px', cursor: 'pointer' }}
         >
           <div className="d-flex justify-content-between align-items-start mb-1">
-            <span className={`small fw-bold px-2 py-1 rounded-pill ${isToday ? 'bg-primary text-white' : 'text-secondary'}`}>{d}</span>
+            <span
+              className={`small fw-bold px-2 py-1 rounded-pill ${
+                isToday ? 'bg-primary text-white' : isSelected ? 'bg-white text-primary border border-primary' : 'text-secondary'
+              }`}
+            >
+              {d}
+            </span>
             {dayAppts.length > 0 && (
               <span className="badge rounded-pill bg-soft-primary small" style={{ fontSize: '0.65rem' }}>
                 {dayAppts.length}
@@ -135,7 +145,7 @@ export default function HomePage() {
               <div
                 key={a.id || idx}
                 className="calendar-event-pill bg-soft-info mb-1 truncate small px-2 rounded-pill border-start border-primary"
-                style={{ fontSize: '0.7rem', borderLeftWidth: '3px !important' }}
+                style={{ fontSize: '0.7rem' }}
               >
                 <span className="fw-bold">{dayjs(a.dataProgramare).format('HH:mm')}</span> {a.medic?.user?.lastName || 'Medic'}
               </div>
@@ -292,6 +302,74 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Secțiunea Detalii Programare la Click */}
+      {selectedDayProg && (
+        <div className="mt-5 mb-5 p-4 glass-panel border-0 shadow-sm rounded-4 fade-in-up">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h4 className="fw-bold text-dark mb-0">
+              <FontAwesomeIcon icon="calendar-day" className="text-primary me-2" />
+              Programări pentru {dayjs(selectedDayProg).format('DD MMMM YYYY')}
+            </h4>
+            <button className="btn btn-sm btn-light rounded-pill px-3" onClick={() => setSelectedDayProg(null)}>
+              Închide
+            </button>
+          </div>
+
+          {appointments.filter(a => dayjs(a.dataProgramare).format('YYYY-MM-DD') === selectedDayProg).length === 0 ? (
+            <div className="text-center py-5 bg-light bg-opacity-50 rounded-4">
+              <div className="opacity-50">
+                <FontAwesomeIcon icon="info-circle" size="2x" className="mb-2" />
+                <p className="mb-0">Nicio programare înregistrată pentru această zi.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="row g-3">
+              {appointments
+                .filter(a => dayjs(a.dataProgramare).format('YYYY-MM-DD') === selectedDayProg)
+                .sort((a, b) => (a.dataProgramare < b.dataProgramare ? -1 : 1))
+                .map(a => (
+                  <div key={a.id} className="col-md-6 col-lg-4">
+                    <div className="p-3 bg-white rounded-4 border border-light-subtle shadow-xs h-100 hover-lift transition-all border-start border-4 border-start-primary">
+                      <div className="d-flex justify-content-between align-items-start mb-3">
+                        <div className="bg-soft-primary px-3 py-1 rounded-pill fw-bold text-primary small">
+                          <FontAwesomeIcon icon="clock" className="me-2" />
+                          {dayjs(a.dataProgramare).format('HH:mm')}
+                        </div>
+                        <span className="badge bg-soft-success rounded-pill small-text px-2">{a.status}</span>
+                      </div>
+
+                      <div className="mb-3">
+                        <div className="small text-uppercase text-muted fw-bold mb-1">Medic Curant</div>
+                        <div className="fw-bold text-dark">
+                          {a.medic?.user ? `Dr. ${a.medic.user.lastName} ${a.medic.user.firstName}` : '-'}
+                        </div>
+                        <div className="text-primary small fw-semibold">{a.medic?.gradProfesional}</div>
+                        <div className="text-secondary small mt-1">
+                          <FontAwesomeIcon icon="stethoscope" className="me-2" />
+                          {a.medic?.sectie?.nume || 'Secție Generală'}
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-top">
+                        <div className="small text-uppercase text-muted fw-bold mb-1">Locație & Clinică</div>
+                        <div className="fw-bold text-dark small">{a.clinica?.nume}</div>
+                        {(a.clinica?.locatie?.oras || a.clinica?.locatie?.adresa) && (
+                          <div className="text-muted small mt-1">
+                            <FontAwesomeIcon icon="map-marker-alt" className="me-2 text-primary opacity-75" />
+                            {a.clinica?.locatie?.oras}
+                            {a.clinica?.locatie?.oras && a.clinica?.locatie?.adresa ? ', ' : ''}
+                            {a.clinica?.locatie?.adresa}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {loading && (
         <div className="text-center py-5">

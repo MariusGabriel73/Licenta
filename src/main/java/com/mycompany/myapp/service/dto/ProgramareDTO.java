@@ -140,11 +140,10 @@ public class ProgramareDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ProgramareDTO)) {
+        if (!(o instanceof ProgramareDTO programareDTO)) {
             return false;
         }
 
-        ProgramareDTO programareDTO = (ProgramareDTO) o;
         if (this.id == null) {
             return false;
         }

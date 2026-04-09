@@ -37,6 +37,7 @@ export interface Medic {
   disponibil?: boolean;
   userId?: ID;
   user?: any;
+  sectie?: Specializare;
 }
 
 export interface Program {

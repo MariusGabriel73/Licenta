@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class FisaMedicalaTestSamples {
 
     private static final Random random = new Random();
-    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     public static FisaMedicala getFisaMedicalaSample1() {
         return new FisaMedicala().id(1L).diagnostic("diagnostic1").tratament("tratament1").recomandari("recomandari1");

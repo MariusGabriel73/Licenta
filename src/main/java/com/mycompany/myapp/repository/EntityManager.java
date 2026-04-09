@@ -187,7 +187,7 @@ public class EntityManager {
                     return r2dbcEntityTemplate.getDatabaseClient().sql(statementMapper.getMappedObject(insert)).fetch().rowsUpdated();
                 })
                 .collectList()
-                .map((List<Long> updates) -> updates.stream().reduce(Long::sum).orElse(0l))
+                .map((List<Long> updates) -> updates.stream().reduce(Long::sum).orElse(0L))
         );
     }
 

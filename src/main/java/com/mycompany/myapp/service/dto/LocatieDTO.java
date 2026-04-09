@@ -56,11 +56,10 @@ public class LocatieDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof LocatieDTO)) {
+        if (!(o instanceof LocatieDTO locatieDTO)) {
             return false;
         }
 
-        LocatieDTO locatieDTO = (LocatieDTO) o;
         if (this.id == null) {
             return false;
         }

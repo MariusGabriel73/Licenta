@@ -38,11 +38,10 @@ public class SectieDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof SectieDTO)) {
+        if (!(o instanceof SectieDTO sectieDTO)) {
             return false;
         }
 
-        SectieDTO sectieDTO = (SectieDTO) o;
         if (this.id == null) {
             return false;
         }

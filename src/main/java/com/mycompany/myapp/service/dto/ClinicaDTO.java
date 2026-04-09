@@ -80,11 +80,10 @@ public class ClinicaDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ClinicaDTO)) {
+        if (!(o instanceof ClinicaDTO clinicaDTO)) {
             return false;
         }
 
-        ClinicaDTO clinicaDTO = (ClinicaDTO) o;
         if (this.id == null) {
             return false;
         }

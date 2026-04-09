@@ -50,11 +50,10 @@ public class SpecializareDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof SpecializareDTO)) {
+        if (!(o instanceof SpecializareDTO specializareDTO)) {
             return false;
         }
 
-        SpecializareDTO specializareDTO = (SpecializareDTO) o;
         if (this.id == null) {
             return false;
         }

@@ -5,6 +5,7 @@ import com.mycompany.myapp.repository.rowmapper.PacientRowMapper;
 import com.mycompany.myapp.repository.rowmapper.UserRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -16,6 +17,7 @@ import org.springframework.data.relational.core.sql.Comparison;
 import org.springframework.data.relational.core.sql.Condition;
 import org.springframework.data.relational.core.sql.Conditions;
 import org.springframework.data.relational.core.sql.Expression;
+import org.springframework.data.relational.core.sql.OrderByField;
 import org.springframework.data.relational.core.sql.Select;
 import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoinCondition;
 import org.springframework.data.relational.core.sql.Table;
@@ -89,6 +91,36 @@ class PacientRepositoryInternalImpl extends SimpleR2dbcRepository<Pacient, Long>
     public Mono<Pacient> findById(Long id) {
         Comparison whereClause = Conditions.isEqual(entityTable.column("id"), Conditions.just(id.toString()));
         return createQuery(null, whereClause).one();
+    }
+
+    @Override
+    public Flux<Pacient> findAllByMedicLogin(String login) {
+        // Generăm lista completă de coloane folosind helper-ele standard JHipster
+        // pentru a evita erorile de tip NoSuchElementException în RowMappers.
+        List<Expression> columns = PacientSqlHelper.getColumns(entityTable, "e");
+        columns.addAll(UserSqlHelper.getColumns(userTable, "user"));
+
+        Select select = Select.builder()
+            .select(columns)
+            .distinct()
+            .from(entityTable)
+            .leftOuterJoin(userTable)
+            .on(Column.create("user_id", entityTable))
+            .equals(Column.create("id", userTable))
+            .join(Table.aliased("programare", "pr"))
+            .on(Column.create("pacient_id", Table.aliased("programare", "pr")))
+            .equals(Column.create("id", entityTable))
+            .join(Table.aliased("medic", "m"))
+            .on(Column.create("id", Table.aliased("medic", "m")))
+            .equals(Column.create("medic_id", Table.aliased("programare", "pr")))
+            .join(Table.aliased("jhi_user", "um"))
+            .on(Column.create("id", Table.aliased("jhi_user", "um")))
+            .equals(Column.create("user_id", Table.aliased("medic", "m")))
+            .where(Conditions.isEqual(Column.create("login", Table.aliased("jhi_user", "um")), Conditions.just("'" + login + "'")))
+            .orderBy(OrderByField.from(Column.create("last_name", userTable)).asc())
+            .build();
+
+        return db.sql(entityManager.createSelect(select)).map(this::process).all();
     }
 
     private Pacient process(Row row, RowMetadata metadata) {

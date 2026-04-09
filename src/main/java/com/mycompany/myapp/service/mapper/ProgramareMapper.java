@@ -17,7 +17,7 @@ import org.mapstruct.*;
 @Mapper(
     componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    uses = { FisaMedicalaMapper.class, RaportProgramareMapper.class }
+    uses = { FisaMedicalaMapper.class, RaportProgramareMapper.class, LocatieMapper.class, SectieMapper.class }
 )
 public interface ProgramareMapper extends EntityMapper<ProgramareDTO, Programare> {
     @Override
@@ -60,6 +60,7 @@ public interface ProgramareMapper extends EntityMapper<ProgramareDTO, Programare
     @Mapping(target = "id", source = "id")
     @Mapping(target = "gradProfesional", source = "gradProfesional")
     @Mapping(target = "user", source = "user", qualifiedByName = "userId")
+    @Mapping(target = "sectie", source = "sectie")
     MedicDTO toDtoMedicId(Medic medic);
 
     @Named("clinicaId")
