@@ -24,6 +24,8 @@ export interface IHeaderProps {
 const Header = (props: IHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const handleCloseMenu = () => setMenuOpen(false);
+
   const dispatch = useAppDispatch();
 
   const handleLocaleChange = event => {
@@ -46,7 +48,7 @@ const Header = (props: IHeaderProps) => {
         <Brand />
         <NavbarToggler aria-label="Menu" onClick={toggleMenu} className="ms-auto" />
         <Collapse isOpen={menuOpen} navbar>
-          <Nav id="header-tabs" className="ms-auto" navbar>
+          <Nav id="header-tabs" className="ms-auto" navbar onClick={handleCloseMenu}>
             <Home />
             {props.isAuthenticated && props.isMedic && (
               <>

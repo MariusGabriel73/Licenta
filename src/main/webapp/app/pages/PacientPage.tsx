@@ -25,7 +25,21 @@ import {
 import { useAppSelector } from 'app/config/store';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileMedical, faStethoscope, faPills, faLightbulb, faPrint, faUserMd, faHospital } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileMedical,
+  faStethoscope,
+  faPills,
+  faLightbulb,
+  faPrint,
+  faUserMd,
+  faHospital,
+  faCalendarAlt,
+  faClock,
+  faCheckCircle,
+  faTimesCircle,
+  faCheck,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
 // import MedicalChatbot from 'app/shared/chatbot/MedicalChatbot';
 
 const SLOT_MINUTES = 30;
@@ -393,17 +407,20 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
 
   return (
     <div className="card glass-panel hover-lift border-0 p-3 mt-4">
-      <div className="card-body">
-        <div className="table-responsive">
+      <div className="card-body p-0">
+        {/* DESKTOP VIEW */}
+        <div className="table-responsive d-none d-md-block p-3">
           <table className="table table-borderless table-hover align-middle mt-2">
             <thead>
-              <tr>
-                <th>Data</th>
-                <th>Ora</th>
-                <th>Medic</th>
-                <th>Locație</th>
-                <th>Status</th>
-                <th style={{ width: 220 }}>Acțiuni</th>
+              <tr className="border-bottom border-light">
+                <th className="text-muted fw-bold small text-uppercase pb-3">Data</th>
+                <th className="text-muted fw-bold small text-uppercase pb-3">Ora</th>
+                <th className="text-muted fw-bold small text-uppercase pb-3">Medic</th>
+                <th className="text-muted fw-bold small text-uppercase pb-3">Locație</th>
+                <th className="text-muted fw-bold small text-uppercase pb-3">Status</th>
+                <th className="text-muted fw-bold small text-uppercase pb-3" style={{ width: 220 }}>
+                  Acțiuni
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -412,29 +429,33 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                 const past = d.isBefore(dayjs());
                 return (
                   <tr key={a.id}>
-                    <td>{d.format('YYYY-MM-DD')}</td>
-                    <td>{d.format('HH:mm')}</td>
                     <td>
-                      {a.medic?.user
-                        ? `Dr. ${a.medic.user.lastName ?? ''} ${a.medic.user.firstName ?? ''}`.trim()
-                        : a.medicId
-                          ? `Medic #${a.medicId}`
-                          : '-'}
+                      <div className="fw-semibold">{d.format('YYYY-MM-DD')}</div>
+                    </td>
+                    <td>
+                      <div className="fw-semibold text-primary">{d.format('HH:mm')}</div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center">
+                        <div
+                          className="bg-soft-primary rounded-circle p-2 me-2 text-primary d-flex align-items-center justify-content-center"
+                          style={{ width: '32px', height: '32px' }}
+                        >
+                          <FontAwesomeIcon icon={faUserMd} size="sm" />
+                        </div>
+                        <div className="fw-bold text-dark">
+                          {a.medic?.user ? `Dr. ${a.medic.user.lastName ?? ''} ${a.medic.user.firstName ?? ''}`.trim() : '-'}
+                        </div>
+                      </div>
                     </td>
                     <td>
                       {a.clinica ? (
                         <>
-                          <div className="fw-bold">{a.clinica.nume}</div>
-                          {a.clinica.locatie && (
-                            <small className="text-muted">
-                              {a.clinica.locatie.oras ?? ''}
-                              {a.clinica.locatie.oras && a.clinica.locatie.adresa ? ' — ' : ''}
-                              {a.clinica.locatie.adresa ?? ''}
-                            </small>
-                          )}
+                          <div className="fw-semibold text-dark">{a.clinica.nume}</div>
+                          <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>
+                            {a.clinica.locatie?.oras}
+                          </small>
                         </>
-                      ) : a.clinicaId ? (
-                        `Clinic #${a.clinicaId}`
                       ) : (
                         '-'
                       )}
@@ -443,10 +464,10 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                       <span
                         className={
                           a.status === ProgramareStatus.ACTIVA
-                            ? 'badge rounded-pill bg-soft-success px-3 py-2'
+                            ? 'badge rounded-pill bg-soft-success text-success px-3 py-2 border-0'
                             : a.status === ProgramareStatus.ANULATA
-                              ? 'badge rounded-pill bg-soft-danger px-3 py-2'
-                              : 'badge rounded-pill bg-soft-primary px-3 py-2'
+                              ? 'badge rounded-pill bg-soft-danger text-danger px-3 py-2 border-0'
+                              : 'badge rounded-pill bg-soft-primary text-primary px-3 py-2 border-0'
                         }
                       >
                         {a.status}
@@ -455,14 +476,16 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                     <td>
                       <div className="d-flex gap-2">
                         <button
-                          className={`btn btn-sm rounded-pill fw-semibold ${rescheduleId === a.id ? 'btn-primary' : 'btn-outline-primary'}`}
+                          className={`btn btn-sm rounded-pill fw-bold ${
+                            rescheduleId === a.id ? 'btn-primary shadow-sm' : 'btn-outline-primary border-2'
+                          }`}
                           disabled={a.status !== ProgramareStatus.ACTIVA || past}
                           onClick={() => startReschedule(a)}
                         >
                           {rescheduleId === a.id ? 'În curs...' : 'Reprogramează'}
                         </button>
                         <button
-                          className="btn btn-sm btn-outline-danger rounded-pill fw-semibold border-0 bg-soft-danger shadow-none"
+                          className="btn btn-sm btn-outline-danger rounded-pill fw-bold border-2"
                           disabled={a.status !== ProgramareStatus.ACTIVA || past}
                           onClick={() => handleCancel(a)}
                         >
@@ -470,10 +493,10 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                         </button>
                         {a.fisaMedicala && (
                           <button
-                            className="btn btn-sm btn-primary rounded-pill fw-semibold d-flex align-items-center shadow-sm"
+                            className="btn btn-sm btn-info text-white rounded-pill fw-bold shadow-sm px-3"
                             onClick={() => onViewPrescription(a)}
                           >
-                            Rețetă
+                            <FontAwesomeIcon icon={faFileMedical} className="me-1" /> Rețetă
                           </button>
                         )}
                       </div>
@@ -483,6 +506,95 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* MOBILE VIEW */}
+        <div className="d-block d-md-none p-2 p-sm-3">
+          <div className="d-flex flex-column gap-3">
+            {appointments.map(a => {
+              const d = dayjs(new Date(a.dataProgramare));
+              const past = d.isBefore(dayjs());
+              const isActive = a.status === ProgramareStatus.ACTIVA;
+
+              return (
+                <div key={a.id} className="bg-light bg-opacity-50 rounded-4 p-2 p-sm-3 border border-light-subtle shadow-sm">
+                  <div className="d-flex align-items-start mb-3 gap-2">
+                    <div className="bg-primary text-white rounded-3 p-2 text-center" style={{ minWidth: '48px' }}>
+                      <div className="small fw-bold text-uppercase" style={{ fontSize: '0.6rem' }}>
+                        {d.format('MMM')}
+                      </div>
+                      <div className="h5 m-0 fw-bold">{d.format('DD')}</div>
+                    </div>
+                    <div className="flex-grow-1">
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <div className="fw-bold text-dark h6 m-0">{d.format('HH:mm')}</div>
+                        <span
+                          className={
+                            a.status === ProgramareStatus.ACTIVA
+                              ? 'badge rounded-pill bg-soft-success text-success px-2 py-1'
+                              : 'badge rounded-pill bg-soft-danger text-danger px-2 py-1'
+                          }
+                          style={{ fontSize: '0.65rem' }}
+                        >
+                          {a.status}
+                        </span>
+                      </div>
+                      <div className="small text-muted">{d.format('dddd')}</div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white rounded-3 border border-light mb-3">
+                    <div className="d-flex align-items-center mb-2">
+                      <div
+                        className="bg-soft-primary rounded-circle p-2 me-2 text-primary d-flex align-items-center justify-content-center"
+                        style={{ width: '28px', height: '28px' }}
+                      >
+                        <FontAwesomeIcon icon={faUserMd} size="sm" />
+                      </div>
+                      <div className="fw-bold text-dark small">
+                        {a.medic?.user ? `Dr. ${a.medic.user.lastName} ${a.medic.user.firstName}` : `Medic #${a.medicId}`}
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <div
+                        className="bg-soft-secondary rounded-circle p-2 me-2 text-secondary d-flex align-items-center justify-content-center"
+                        style={{ width: '28px', height: '28px' }}
+                      >
+                        <FontAwesomeIcon icon={faHospital} size="sm" />
+                      </div>
+                      <div className="text-muted small fw-medium">
+                        {a.clinica?.nume} <span className="opacity-50 mx-1">•</span> {a.clinica?.locatie?.oras}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="d-flex flex-column gap-2">
+                    <button
+                      className={`btn btn-sm rounded-pill fw-bold py-2 ${
+                        rescheduleId === a.id ? 'btn-primary shadow-sm' : 'btn-outline-primary border-2'
+                      }`}
+                      disabled={!isActive || past}
+                      onClick={() => startReschedule(a)}
+                    >
+                      {rescheduleId === a.id ? 'În curs...' : 'Reprogramează'}
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-danger rounded-pill fw-bold border-2 py-2"
+                      disabled={!isActive || past}
+                      onClick={() => handleCancel(a)}
+                    >
+                      Anulează
+                    </button>
+                    {a.fisaMedicala && (
+                      <button className="btn btn-sm btn-primary rounded-pill fw-bold py-2 shadow-sm" onClick={() => onViewPrescription(a)}>
+                        <FontAwesomeIcon icon={faFileMedical} className="me-2" /> Vezi Rețeta
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

@@ -70,66 +70,132 @@ const PacientPrescriptions = () => {
               <p className="text-muted small">După ce medicul va finaliza consultația, rețeta va apărea aici.</p>
             </div>
           ) : (
-            <div className="table-responsive">
-              <Table hover borderless className="align-middle mb-0">
-                <thead className="bg-light bg-opacity-50">
-                  <tr>
-                    <th className="px-4 py-3 text-secondary small text-uppercase fw-bold">Data</th>
-                    <th className="py-3 text-secondary small text-uppercase fw-bold">Medic</th>
-                    <th className="py-3 text-secondary small text-uppercase fw-bold">Clinică</th>
-                    <th className="py-3 text-secondary small text-uppercase fw-bold">Diagnostic</th>
-                    <th className="py-3 text-end px-4 text-secondary small text-uppercase fw-bold">Acțiuni</th>
-                  </tr>
-                </thead>
-                <tbody>
+            <>
+              {/* DESKTOP VIEW */}
+              <div className="table-responsive d-none d-md-block">
+                <Table hover borderless className="align-middle mb-0">
+                  <thead className="bg-light bg-opacity-50">
+                    <tr>
+                      <th className="px-4 py-3 text-secondary small text-uppercase fw-bold">Data</th>
+                      <th className="py-3 text-secondary small text-uppercase fw-bold">Medic</th>
+                      <th className="py-3 text-secondary small text-uppercase fw-bold">Clinică</th>
+                      <th className="py-3 text-secondary small text-uppercase fw-bold">Diagnostic</th>
+                      <th className="py-3 text-end px-4 text-secondary small text-uppercase fw-bold">Acțiuni</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {appointments.map(a => (
+                      <tr key={a.id} className="border-top border-light cursor-pointer" onClick={() => viewPrescription(a)}>
+                        <td className="px-4 py-3">
+                          <div className="fw-bold">{dayjs(a.dataProgramare).format('DD MMM YYYY')}</div>
+                          <small className="text-muted">{dayjs(a.dataProgramare).format('HH:mm')}</small>
+                        </td>
+                        <td className="py-3">
+                          <div className="d-flex align-items-center">
+                            <div
+                              className="bg-soft-primary rounded-circle p-2 me-2 text-primary small d-flex align-items-center justify-content-center"
+                              style={{ width: '32px', height: '32px' }}
+                            >
+                              <FontAwesomeIcon icon={faUserMd} />
+                            </div>
+                            <div>
+                              <div className="fw-semibold">
+                                {a.medic?.user ? `Dr. ${a.medic.user.lastName} ${a.medic.user.firstName}` : `Medic #${a.medicId}`}
+                              </div>
+                              <small className="text-muted small-text">{a.medic?.gradProfesional || 'Medic Specialist'}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3">
+                          <div className="fw-semibold">{a.clinica?.nume || 'Clinică Medicală'}</div>
+                          <small className="text-muted">{a.clinica?.locatie?.oras || '-'}</small>
+                        </td>
+                        <td className="py-3">
+                          <Badge color="info" pill className="fw-normal bg-opacity-10 text-info border-0 px-3">
+                            {a.fisaMedicala?.diagnostic?.substring(0, 30) || 'Diagnostic...'}
+                            {(a.fisaMedicala?.diagnostic?.length || 0) > 30 ? '...' : ''}
+                          </Badge>
+                        </td>
+                        <td className="text-end px-4 py-3">
+                          <Button
+                            color="primary"
+                            size="sm"
+                            outline
+                            pill
+                            className="rounded-pill px-4 border-0 shadow-sm bg-primary bg-opacity-10 text-primary"
+                          >
+                            Vezi Detalii
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+
+              {/* MOBILE VIEW */}
+              <div className="d-block d-md-none p-3">
+                <div className="d-flex flex-column gap-3">
                   {appointments.map(a => (
-                    <tr key={a.id} className="border-top border-light cursor-pointer" onClick={() => viewPrescription(a)}>
-                      <td className="px-4 py-3">
-                        <div className="fw-bold">{dayjs(a.dataProgramare).format('DD MMM YYYY')}</div>
-                        <small className="text-muted">{dayjs(a.dataProgramare).format('HH:mm')}</small>
-                      </td>
-                      <td className="py-3">
+                    <div
+                      key={a.id}
+                      className="bg-light bg-opacity-50 rounded-4 p-3 border border-light-subtle shadow-sm cursor-pointer"
+                      onClick={() => viewPrescription(a)}
+                    >
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="d-flex align-items-center">
+                          <h3 className="m-0 text-primary me-3 fw-bold">{dayjs(a.dataProgramare).format('DD')}</h3>
+                          <div>
+                            <div className="fw-bold text-dark">{dayjs(a.dataProgramare).format('MMM YYYY')}</div>
+                            <small className="text-muted">{dayjs(a.dataProgramare).format('HH:mm')}</small>
+                          </div>
+                        </div>
+                        <Badge color="info" pill className="fw-normal bg-opacity-10 text-info border-0 px-3 py-2">
+                          {a.fisaMedicala?.diagnostic?.substring(0, 20) || 'Diagnostic...'}
+                          {(a.fisaMedicala?.diagnostic?.length || 0) > 20 ? '...' : ''}
+                        </Badge>
+                      </div>
+
+                      <div className="d-flex flex-column gap-2 mb-3 bg-white p-2 rounded-3 border border-light">
                         <div className="d-flex align-items-center">
                           <div
                             className="bg-soft-primary rounded-circle p-2 me-2 text-primary small d-flex align-items-center justify-content-center"
-                            style={{ width: '32px', height: '32px' }}
+                            style={{ width: '28px', height: '28px' }}
                           >
                             <FontAwesomeIcon icon={faUserMd} />
                           </div>
                           <div>
-                            <div className="fw-semibold">
-                              {a.medic?.user ? `Dr. ${a.medic.user.lastName} ${a.medic.user.firstName}` : `Medic #${a.medicId}`}
+                            <div className="fw-semibold small text-dark">
+                              {a.medic?.user ? `Dr. ${a.medic.user.lastName} ${a.medic.user.firstName}` : `Medic`}
                             </div>
-                            <small className="text-muted small-text">{a.medic?.gradProfesional || 'Medic Specialist'}</small>
                           </div>
                         </div>
-                      </td>
-                      <td className="py-3">
-                        <div className="fw-semibold">{a.clinica?.nume || 'Clinică Medicală'}</div>
-                        <small className="text-muted">{a.clinica?.locatie?.oras || '-'}</small>
-                      </td>
-                      <td className="py-3">
-                        <Badge color="info" pill className="fw-normal bg-opacity-10 text-info border-0 px-3">
-                          {a.fisaMedicala?.diagnostic?.substring(0, 30) || 'Diagnostic...'}
-                          {(a.fisaMedicala?.diagnostic?.length || 0) > 30 ? '...' : ''}
-                        </Badge>
-                      </td>
-                      <td className="text-end px-4 py-3">
-                        <Button
-                          color="primary"
-                          size="sm"
-                          outline
-                          pill
-                          className="rounded-pill px-4 border-0 shadow-sm bg-primary bg-opacity-10 text-primary"
-                        >
-                          Vezi Detalii
-                        </Button>
-                      </td>
-                    </tr>
+
+                        <div className="d-flex align-items-center">
+                          <div
+                            className="bg-soft-secondary rounded-circle p-2 me-2 text-secondary small d-flex align-items-center justify-content-center"
+                            style={{ width: '28px', height: '28px' }}
+                          >
+                            <FontAwesomeIcon icon={faHospital} />
+                          </div>
+                          <div className="small text-muted">{a.clinica?.nume || 'Clinică Medicală'}</div>
+                        </div>
+                      </div>
+
+                      <Button
+                        color="primary"
+                        size="sm"
+                        outline
+                        pill
+                        className="w-100 rounded-pill border-0 shadow-sm bg-white text-primary"
+                      >
+                        Vezi Detalii Rețetă
+                      </Button>
+                    </div>
                   ))}
-                </tbody>
-              </Table>
-            </div>
+                </div>
+              </div>
+            </>
           )}
         </CardBody>
       </Card>
